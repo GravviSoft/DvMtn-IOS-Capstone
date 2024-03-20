@@ -116,57 +116,20 @@ extension MainFeedController{
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.reuseTweetCellId, for: indexPath) as! TweetCell
         cell.tweet = tweets[indexPath.row]
-//        cell.setNeedsLayout()
-//        cell.layoutIfNeeded()
-//        tweets[indexPath.item] = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
         return cell
     }
-    
-
 }
 
 
 extension MainFeedController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-//        let referenceWidth = collectionView.safeAreaLayoutGuide.layoutFrame.width sectionInset.left
-//            - sectionInset.right
-//            - collectionView.contentInset.left
-//            - collectionView.contentInset.right
-//        layout. = UICollectionViewFlowLayout.automaticSize
-//        let cellsAcross: CGFloat = 3
-//        let spaceBetweenCells: CGFloat = 1
-//        let dim = (collectionView.bounds.width - (cellsAcross - 1) * spaceBetweenCells) / cellsAcross
-//        return CGSize(width: dim, height: dim)
-//        print(msg)
+
         let msg = tweets[indexPath.row].tweet
-//        print(msg)
-//        print(msg.numberOfLines())
-//        let trimmedString = msg.trimmingCharacters(in: .whitespaces)
-//
-//        let setHeight = Utilities().heightForLable(text: trimmedString, width: view.frame.width)
-//        print(setHeight + 50)
-//        let heights = tweets.map { tweet in
-//            <#code#>
-//        }
         let numLine = Double(msg.numberOfLines()) * 5
         if tweets.count > 0 {
             let setHeight = Utilities().heightForLable(text: msg, width: view.frame.width)
-//            print(setHeight)
-//            let trimmedString = msg.trimmingCharacters(in: .whitespaces)
-//
-//            let setHeight = Utilities().heightForLable(text: trimmedString, width: view.frame.width)
-//            print(setHeight + 50)
             return CGSize(width: view.frame.width, height:  setHeight + 65)
         }
-//        layout.estimatedItemSize = CGSize(width: view.frame.width, height: 100)
-//        layout.itemSize = UICollectionViewFlowLayout.automaticSize
-        
-//        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-//            layout.estimatedItemSize = CGSize(width: view.frame.width, height: 100)
-//            layout.itemSize = UICollectionViewFlowLayout.automaticSize
-//     
-//        }
         
         return CGSize(width: view.frame.width, height:  200 )
     }
