@@ -27,20 +27,13 @@ class MainFeedController: UICollectionViewController{
         didSet{ collectionView.reloadData() }
     }
     
+
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         fetchTweets()
         
-
-//        let collectionHeight = self.collectionViewLayout.collectionViewContentSize.height
-
-//        if let flowLayout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
-//           flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-//        }
-//        cellSizes = myAwesomeCells.map({ _ in return CGSize(width: 200, height: 50) })
-
     }
     
     //MARK: - Selectors
@@ -56,7 +49,7 @@ class MainFeedController: UICollectionViewController{
     func fetchTweets(){
         TweetService.shared.fetchTweet { tweets in
             print("Number of tweets \(tweets.count)")
-            print(tweets)
+//            print(tweets)
             self.tweets = tweets
         }
     }
@@ -65,7 +58,12 @@ class MainFeedController: UICollectionViewController{
     func configureUI(){
         collectionView.register(TweetCell.self, forCellWithReuseIdentifier: K.reuseTweetCellId)//register TweetCell
         configNavBar()
-        self.collectionView.backgroundColor = .vibeTheme1
+        collectionView.backgroundColor = .vibeTheme1
+        (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .portrait //disable device rotation
+        if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+           flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize  //Set the autolayout for the collectionview cells
+         }
+
     }
     
     func configProfileImg(){
@@ -84,12 +82,6 @@ class MainFeedController: UICollectionViewController{
         
     }
     
-//    func configLine(){
-//        let line = UIView()
-//        line.backgroundColor = .systemGray
-//        addSubview(line)
-//        line.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 0.18)
-//    }
     
     func configNavBar(){
         let image = UIImageView(image: UIImage(named: "vibeImgTrans"))
@@ -120,25 +112,16 @@ extension MainFeedController{
     }
 }
 
-
 extension MainFeedController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
-        let msg = tweets[indexPath.row].tweet
-        let numLine = Double(msg.numberOfLines()) * 5
-        if tweets.count > 0 {
-            let setHeight = Utilities().heightForLable(text: msg, width: view.frame.width)
-            return CGSize(width: view.frame.width, height:  setHeight + 65)
-        }
-        
-        return CGSize(width: view.frame.width, height:  200 )
+        return CGSize(width: collectionView.frame.width, height: 200)
     }
     
+    
     //Make sure the screen doesnt resize incorrectly on device rotate
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        collectionView?.collectionViewLayout.invalidateLayout()
-    }
+//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+//        super.viewWillTransition(to: size, with: coordinator)
+//        collectionView?.collectionViewLayout.invalidateLayout()
+//    }
 }
-
 

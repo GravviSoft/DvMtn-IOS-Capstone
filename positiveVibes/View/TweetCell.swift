@@ -90,15 +90,13 @@ class TweetCell: UICollectionViewCell {
         return button
     }()
     
-    
 
+    
     
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-//        backgroundColor = .vibeTheme1
-            
+                    
         addSubview(profileImg)
         profileImg.anchor(top: topAnchor, left: leftAnchor, paddingTop: 2, paddingLeft: 10)
                 
@@ -113,12 +111,18 @@ class TweetCell: UICollectionViewCell {
         
         let vertStack = UIStackView(arrangedSubviews: [labelStack, tweetMsg, iconStack])
         vertStack.axis = .vertical
-        vertStack.spacing = 2
+        vertStack.spacing = 5
 //        vertStack.distribution = .equalSpacing
         addSubview(vertStack)
         vertStack.anchor(top: topAnchor, left: profileImg.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 4,  paddingLeft: 12, paddingBottom: 12, paddingRight: 10)
              
         configLine()
+        
+        //set a fixed width for the collection view cell
+//        translatesAutoresizingMaskIntoConstraints = false
+        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
+        
+
     }
     
     
