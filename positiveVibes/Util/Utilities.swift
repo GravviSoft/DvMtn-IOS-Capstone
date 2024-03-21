@@ -115,8 +115,12 @@ class Utilities {
                 attributes: [NSAttributedString.Key.foregroundColor: UIColor.iconBadgeTheme]
             )
         tf.textColor = .twitterBlue
+        tf.returnKeyType = .next
+//        tf.addTarget(self, action: next, for: .touchUpInside)
         tf.addTarget(self, action: selector_1, for: .editingChanged)
         tf.addTarget(self, action: selector_2, for: .editingDidEndOnExit)
+//        tf.addTarget(self, action: selector_3, for: .ed)
+
         return tf
     }
     
@@ -188,6 +192,31 @@ class Utilities {
         
         return label.bounds.size.height
     }
+    
+    func keyboardBtns(withTF tf: UITextField, nextBtn nextSelector: Selector, doneBtn doneSelector: Selector){
+        let keyboardToolbar = UIToolbar()
+        keyboardToolbar.sizeToFit()
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+            target: nil, action: nil)
+        let down = UIBarButtonItem(image: UIImage(systemName: "chevron.down"), style: .plain, target: self, action:  nextSelector)
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done,
+            target: self, action: doneSelector)
+        keyboardToolbar.items = [flexibleSpace, down, doneButton]
+        tf.inputAccessoryView = keyboardToolbar
+    }
+    
+    func keyboardDoneBtn(withTF tv: UITextView, doneBtn doneSelector: Selector){
+        let keyboardToolbar = UIToolbar()
+        keyboardToolbar.sizeToFit()
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+            target: nil, action: nil)
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done,
+            target: self, action: doneSelector)
+        keyboardToolbar.items = [flexibleSpace, doneButton]
+        tv.inputAccessoryView = keyboardToolbar
+    }
+    
+    
     
 }
 

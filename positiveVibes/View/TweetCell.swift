@@ -16,17 +16,12 @@ class TweetCell: UICollectionViewCell {
         didSet{ configTweet() }
     }
     
-//    var user: User?{
-//        didSet{ configUser() }
-//    }
-    
     private let profileImg: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
         iv.setDimensions(width: 38, height: 38)
-        iv.clipsToBounds = true
-        iv.contentMode = .scaleAspectFit
         iv.layer.cornerRadius = 38 / 2
+        iv.layer.masksToBounds = true
         return iv
     }()
     
@@ -34,8 +29,6 @@ class TweetCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.numberOfLines = 0
-        label.text = "ful lname https:// fireba sest orag e.googleapis .com:443/v0/ b/vibe-fd573.app spot.com/o/prof ile_images%2FE9282 F6A-748 3-4258- 80AA-4B 1D80 37E282? alt= med ia&t oken=db84c 094-10f3-4e f8-b7 28- f7d4 5d 3e1 106 ful lname https:// fireba sest orag e.googleapis \n 3/v0/ b/vibe-fd573.app spot.com/o/prof ile_images%2FE9282 F6A-748 3-4258- 80AA-4B 1D80 37E282? alt= med ia&t oken=db84c 094-10f3-4e f8-b7 28- f7d4 5d 3e1 106"
-
         return label
     }()
     
@@ -53,15 +46,17 @@ class TweetCell: UICollectionViewCell {
     private let commentBtn: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "bubble"), for: .normal)
-        button.tintColor = .iconBadgeTheme
+        button.tintColor = .systemGray
+        button.setDimensions(width: 20, height: 20)
         button.addTarget(self, action: #selector(commentBtnPressed), for: .touchUpInside)
         return button
     }()
     
     private let retweetBtn: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "arrow.2.squarepath"), for: .normal)
-        button.tintColor = .iconBadgeTheme
+        button.setImage(UIImage(systemName: "arrow.counterclockwise"), for: .normal)
+        button.tintColor = .systemGray
+        button.setDimensions(width: 20, height: 20)
         button.addTarget(self, action: #selector(retweetBtnPressed), for: .touchUpInside)
         return button
     }()
@@ -69,7 +64,8 @@ class TweetCell: UICollectionViewCell {
     private let likeBtn: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "suit.heart"), for: .normal)
-        button.tintColor = .iconBadgeTheme
+        button.tintColor = .systemGray
+        button.setDimensions(width: 20, height: 20)
         button.addTarget(self, action: #selector(likeBtnPressed), for: .touchUpInside)
         return button
     }()
@@ -77,20 +73,21 @@ class TweetCell: UICollectionViewCell {
     private let bookmarkBtn: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "bookmark"), for: .normal)
-        button.tintColor = .iconBadgeTheme
+        button.tintColor = .systemGray
+        button.setDimensions(width: 20, height: 20)
         button.addTarget(self, action: #selector(bookmarkBtnPressed), for: .touchUpInside)
         return button
     }()
     
     private let shareBtn: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
-        button.tintColor = .iconBadgeTheme
+        button.setImage(UIImage(systemName: "square.and.arrow.up.on.square"), for: .normal)
+        button.tintColor = .systemGray
+        button.setDimensions(width: 20, height: 20)
         button.addTarget(self, action: #selector(shareBtnPressed), for: .touchUpInside)
         return button
     }()
     
-
     
     
     //MARK: - Lifecycle
@@ -108,10 +105,11 @@ class TweetCell: UICollectionViewCell {
         let iconStack = UIStackView(arrangedSubviews: [commentBtn, retweetBtn, likeBtn, bookmarkBtn, shareBtn])
         iconStack.axis = .horizontal
         iconStack.distribution = .equalSpacing
+//        iconStack.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         let vertStack = UIStackView(arrangedSubviews: [labelStack, tweetMsg, iconStack])
         vertStack.axis = .vertical
-        vertStack.spacing = 5
+        vertStack.spacing = 8
 //        vertStack.distribution = .equalSpacing
         addSubview(vertStack)
         vertStack.anchor(top: topAnchor, left: profileImg.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 4,  paddingLeft: 12, paddingBottom: 12, paddingRight: 10)
@@ -166,7 +164,6 @@ class TweetCell: UICollectionViewCell {
         addSubview(line)
         line.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 0.18)
     }
-    
     
     func configTweet(){
         guard let tweet = tweet else { return }

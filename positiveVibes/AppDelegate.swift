@@ -9,17 +9,13 @@ import UIKit
 import CoreData
 import FirebaseCore
 import FirebaseFirestore
-import IQKeyboardManagerSwift
 
-@main
- class AppDelegate: UIResponder, UIApplicationDelegate {
+@main class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var restrictRotation:UIInterfaceOrientationMask = .all
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
-        IQKeyboardManager.shared.enable = true
-        IQKeyboardManager.shared.resignOnTouchOutside = true
         return true
     }
 

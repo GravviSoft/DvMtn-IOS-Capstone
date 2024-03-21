@@ -35,7 +35,7 @@ class TweetService {
                 let user = User(uid: uid, user: userDict)
                 
                 let tweetID = snapshot.key
-                print(tweetID)
+//                print(tweetID)
                 let tweet = Tweet(user: user,tweetID: tweetID, tweetDict: dictionary)
                 tweets.append(tweet)
                 completion(tweets)

@@ -168,11 +168,11 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        //textField delegates
         emailTextField.delegate = self
         passwordTextField.delegate = self
         fullNameTextField.delegate = self
         userNameTextField.delegate = self
-        
         //set image picker delegate and allowEditing delegate
         imgPicker.delegate = self
         imgPicker.allowsEditing = true
@@ -180,6 +180,54 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
     }
    
     //MARK: - Selectors
+    
+    @objc func keyboardWillShow(sender: NSNotification) {
+         self.view.frame.origin.y = -175 // Move view 150 points upward
+    }
+
+    @objc func keyboardWillHide(sender: NSNotification) {
+         self.view.frame.origin.y = 0 // Move view to original position
+    }
+    
+    @objc func keyboardNxtBtnEmail(){
+        passwordTextField.becomeFirstResponder()
+    }
+    
+    @objc func keyboardNxtBtnPass(){
+        fullNameTextField.becomeFirstResponder()
+    }
+    
+    @objc func keyboardNxtBtnFName(){
+        userNameTextField.becomeFirstResponder()
+    }
+    
+    @objc func keyboardNxtBtnUName(){
+        emailTextField.becomeFirstResponder()
+    }
+    
+    @objc func resignKeyboard(){
+        view.endEditing(true)
+    }
+   
+    @objc func textFieldDidBeginEditing(_ textField: UITextField) { //Keyboard code
+        switch textField.placeholder{
+        case "Email":
+            Utilities().keyboardBtns(withTF: textField, nextBtn: #selector(keyboardNxtBtnEmail), doneBtn: #selector(resignKeyboard))
+        case "Password":
+            Utilities().keyboardBtns(withTF: textField, nextBtn: #selector(keyboardNxtBtnPass), doneBtn: #selector(resignKeyboard))
+        case "Full Name":
+            Utilities().keyboardBtns(withTF: textField, nextBtn: #selector(keyboardNxtBtnFName), doneBtn: #selector(resignKeyboard))
+        case "User Name":
+            Utilities().keyboardBtns(withTF: textField, nextBtn: #selector(keyboardNxtBtnUName), doneBtn: #selector(resignKeyboard))
+        default:
+            print("Error")
+        }
+
+    }
+    
+    
+    
+    
     @objc func textFieldDidChange(_ textField: UITextField) {
         
         errorView.removeFromSuperview()// Remove errors when any changes detected
@@ -197,8 +245,6 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
             print("Error")
         }
         //show success green check and title above text field when typing
-        
-        
 //        switch textField.placeholder{
 //        case "Email":
 //            view.viewWithTag(1)?.isHidden = textField.text!.isEmpty ? true : false
@@ -219,37 +265,13 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
     
     @objc func textFieldDidEndEditing(_ textField: UITextField){
         errorView.removeFromSuperview()
-        
-        //Hide the error messages after you click out of the textfield
-//        switch textField.placeholder{
-//        case "Email":
-//        for tag in 3...5{
-//            view.viewWithTag(tag)?.isHidden = true
-//        }
-//        case "Password":
-//        for tag in 8...10{
-//            view.viewWithTag(tag)?.isHidden = true
-//        }
-//        case "Full Name":
-//        for tag in 13...15{
-//            view.viewWithTag(tag)?.isHidden = true
-//        }
-//        case "User Name":
-//        for tag in 18...20{
-//            view.viewWithTag(tag)?.isHidden = true
-//        }
-//        default:
-//            print("Error")
-//        }
     }
     
     @objc func addProfileImage(){
-        print("Image pressed")
         present(imgPicker, animated: true, completion: nil)
     }
     
     @objc func registerBtnPressed(){
-        print("Register btn pressed")
         guard let image = profileImg else {
             Utilities().presentUIAlert("Please select a profile image.", view: self) //Image validation
             return
@@ -259,13 +281,11 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
         guard let fullName = fullNameTextField.text else { return }
         if fullName.count == 0 {  //full name validation error
             Utilities().configErrors(forTextField: fullNameContainer, errView: errorView, label: errorLabel, errMsg: "You need to enter your full name.", warnImg: fullNameFieldImg)
-//            Utilities().showErrors(withText: "You need to enter your full name.", forView: fullNameContainer, errorTag1: 13)
             return
         }
         guard let userName = userNameTextField.text else { return }
         if userName.count == 0{   //user name validation error
             Utilities().configErrors(forTextField: userNameContainer, errView: errorView, label: errorLabel, errMsg: "You need to enter a user name.", warnImg: userNameFieldImg)
-//            Utilities().showErrors(withText: "You need to enter a user name.", forView: userNameContainer, errorTag1: 18)
             return
         }
         
@@ -299,6 +319,8 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = .vibeTheme1
         navigationItem.hidesBackButton = true
         
+        keyboardObservers()
+        
         view.addSubview(addImageView)
         addImageView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, height: 175)
         
@@ -312,6 +334,12 @@ class RegistrationController: UIViewController, UITextFieldDelegate {
         haveAcctBtn.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingBottom: 35)
 
     }
+    
+    func keyboardObservers(){
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(sender:)), name: UIResponder.keyboardWillShowNotification, object: nil);
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(sender:)), name: UIResponder.keyboardWillHideNotification, object: nil);
+    }
+    
 }
 
 

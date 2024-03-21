@@ -48,7 +48,7 @@ class MainFeedController: UICollectionViewController{
     //MARK: - API
     func fetchTweets(){
         TweetService.shared.fetchTweet { tweets in
-            print("Number of tweets \(tweets.count)")
+//            print("Number of tweets \(tweets.count)")
 //            print(tweets)
             self.tweets = tweets
         }
@@ -75,6 +75,7 @@ class MainFeedController: UICollectionViewController{
         image.layer.cornerRadius = 40 / 2
         image.layer.masksToBounds = true
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: image)
+        
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(userImgPressed))
         image.addGestureRecognizer(tap)

@@ -109,6 +109,32 @@ class LoginController: UIViewController, UITextFieldDelegate{
     }
     
     //MARK: - Selectors
+    
+    @objc func keyboardNxtBtnEmail(){
+        passwordTextField.becomeFirstResponder()
+    }
+    
+    @objc func keyboardNxtBtnPass(){
+        emailTextField.becomeFirstResponder()
+    }
+    
+    @objc func resignKeyboard(){
+        view.endEditing(true)
+    }
+   
+    @objc func textFieldDidBeginEditing(_ textField: UITextField) { //Keyboard code
+        switch textField.placeholder{
+        case "Email":
+            Utilities().keyboardBtns(withTF: textField, nextBtn: #selector(keyboardNxtBtnEmail), doneBtn: #selector(resignKeyboard))
+        case "Password":
+            Utilities().keyboardBtns(withTF: textField, nextBtn: #selector(keyboardNxtBtnPass), doneBtn: #selector(resignKeyboard))
+        default:
+            print("Error")
+        }
+
+    }
+    
+    
     @objc func textFieldDidChange(_ textField: UITextField) {
         
         errorView.removeFromSuperview()// Remove errors when any changes detected
@@ -132,20 +158,7 @@ class LoginController: UIViewController, UITextFieldDelegate{
     }
     
     @objc func textFieldDidEndEditing(_ textField: UITextField){
-        //Remove the errors when you click out of the text field or press return on keyboard
-        errorView.removeFromSuperview()
-    
-//        if textField.placeholder == "Email"{
-//            errorView.removeFromSuperview()
-//            errorView.isHidden = true
-//            for tag in 3...5{
-//                view.viewWithTag(tag)?.isHidden = true
-//            }
-//        } else {
-//            for tag in 8...10{
-//                view.viewWithTag(tag)?.isHidden = true
-//            }
-//        }
+        errorView.removeFromSuperview()  //Remove errors by click out of the textfield or press return
     }
     
     @objc func loginBtnPressed(){
@@ -255,4 +268,48 @@ class LoginController: UIViewController, UITextFieldDelegate{
         
     }
     
+}
+
+
+
+extension UITextField {
+    
+//    func goToNextField(){
+//        UIResponder.resignFirstResponder
+//        passwordTextField
+//    }
+
+    func addDoneButtonOnKeyboard() {
+        
+       let keyboardToolbar = UIToolbar()
+       keyboardToolbar.sizeToFit()
+       let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+           target: nil, action: nil)
+        let down = UIBarButtonItem(image: UIImage(systemName: "chevron.down"), style: .plain, target: self, action:  #selector(resignFirstResponder))
+//       let customNavBarButton = UIBarButtonItem(customView: customButtonWithImage)
+//       let down = UIBarButtonItem(image: UIImage(systemName: "chevron.down"), style: .plain, target: self, action: selector)
+//       let down = UIBarButtonItem(barButtonSystemItem: UIImage(systemName: "chevron.down"),
+//           target: nil, action: nil)
+       let doneButton = UIBarButtonItem(barButtonSystemItem: .done,
+           target: self, action: #selector(resignFirstResponder))
+       keyboardToolbar.items = [flexibleSpace, down, doneButton]
+       self.inputAccessoryView = keyboardToolbar
+   }
+}
+
+
+//A swift extension that applies mxcl's answer to make this particularly easy (adapted to swift 2.3 by Traveler):
+
+extension UITextField {
+    class func connectFields(fields:[UITextField]) -> Void {
+        guard let last = fields.last else {
+            return
+        }
+        for i in 0 ..< fields.count - 1 {
+            fields[i].returnKeyType = .next
+            fields[i].addTarget(fields[i+1], action: #selector(becomeFirstResponder), for: .editingDidEndOnExit)
+        }
+        last.returnKeyType = .done
+        last.addTarget(last, action: #selector(UIResponder.resignFirstResponder), for: .editingDidEndOnExit)
+    }
 }

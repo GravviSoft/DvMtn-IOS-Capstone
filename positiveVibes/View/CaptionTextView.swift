@@ -9,6 +9,7 @@ import UIKit
 
 class CaptionTextView: UITextView {
     
+    //MARK: - Properties
     let placeHolder: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -17,6 +18,7 @@ class CaptionTextView: UITextView {
         return label
     }()
     
+    //MARK: - Lifecycle
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         
@@ -28,7 +30,6 @@ class CaptionTextView: UITextView {
         addSubview(placeHolder)
         placeHolder.anchor(top: topAnchor, left: leftAnchor, paddingTop: 8, paddingLeft: 4)
         
-        
         NotificationCenter.default.addObserver(self, selector: #selector(handleTextInputChange), name: UITextView.textDidChangeNotification, object: nil)
     }
     
@@ -36,7 +37,10 @@ class CaptionTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    //MARK: - Selectors
     @objc func handleTextInputChange() {
         placeHolder.isHidden = !text.isEmpty
     }
+    
 }

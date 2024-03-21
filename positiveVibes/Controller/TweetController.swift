@@ -31,21 +31,13 @@ class TweetController: UIViewController, UIScrollViewDelegate {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
         iv.setDimensions(width: 50, height: 50)
-        iv.clipsToBounds = true
-        iv.contentMode = .scaleAspectFit
         iv.layer.cornerRadius = 50 / 2
+        iv.layer.masksToBounds = true
         return iv
     }()
     
     private let captionTextView = CaptionTextView()
-    
-//    private let tweetTextField: UITextField = {
-//        let tf = UITextField()
-//        tf.placeholder = "What's Happening"
-//        tf.tintColor = .white
-//        return tf
-//    }()
-    
+        
     lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
@@ -66,12 +58,17 @@ class TweetController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        captionTextView.becomeFirstResponder()
+        configKeyboard()
         configureUI()
 
     }
     //MARK: - API
     //MARK: - Selector
+    
+    @objc func resignKeyboard(){
+        view.endEditing(true)
+        print("resign")
+    }
     
     @objc func postPressed(){
         print("post pressed")
@@ -99,10 +96,14 @@ class TweetController: UIViewController, UIScrollViewDelegate {
     //MARK: - Helpers
     func configureUI(){
         view.backgroundColor = .vibeTheme1
-        
         configNavBar()
         configProfileImg()
         configTextField()
+    }
+    
+    func configKeyboard(){
+        Utilities().keyboardDoneBtn(withTF: captionTextView, doneBtn: #selector(resignKeyboard))
+        captionTextView.becomeFirstResponder()
     }
     
     func configNavBar(){
