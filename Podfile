@@ -9,7 +9,7 @@ target 'positiveVibes' do
   pod 'FirebaseStorage'
   pod 'FirebaseDatabase'
   pod 'SDWebImage', '~> 5.19'
-  
+
 end
 
 post_install do |installer|
@@ -19,3 +19,5 @@ post_install do |installer|
     end
   end
 end
+
+
