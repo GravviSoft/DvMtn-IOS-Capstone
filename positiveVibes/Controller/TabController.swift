@@ -65,16 +65,10 @@ class TabController: UITabBarController {
         
         fetchUser()
         
-        //add tweet btn to view
         view.addSubview(tweetBtn)
         tweetBtn.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, paddingBottom: 65, paddingRight: 15, width: 60, height: 60)
         tweetBtn.layer.cornerRadius = 60 / 2
         
-        //add line at top of tab bar
-//        let dividerView = UIView()
-//        dividerView.backgroundColor = .white
-//        view.addSubview(dividerView)
-//        dividerView.anchor(top: tweetBtn.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 10, height: 0.18)
     }
     
     

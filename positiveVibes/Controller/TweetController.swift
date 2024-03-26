@@ -9,7 +9,7 @@ import UIKit
 import SDWebImage
 import FirebaseDatabase
 
-class TweetController: UIViewController, UIScrollViewDelegate {
+class TweetController: UIViewController{
     
     //MARK: - Properties
     private let user: User
@@ -38,13 +38,13 @@ class TweetController: UIViewController, UIScrollViewDelegate {
     
     private let captionTextView = CaptionTextView()
         
-    lazy var scrollView: UIScrollView = {
-        let scroll = UIScrollView()
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        scroll.delegate = self
-        scroll.contentSize = CGSize(width: self.view.frame.size.width, height: 1000)
-        return scroll
-    }()
+//    lazy var scrollView: UIScrollView = {
+//        let scroll = UIScrollView()
+//        scroll.translatesAutoresizingMaskIntoConstraints = false
+//        scroll.delegate = self
+//        scroll.contentSize = CGSize(width: self.view.frame.size.width, height: 1000)
+//        return scroll
+//    }()
     
     //MARK: - Lifecycle
     init(user: User){

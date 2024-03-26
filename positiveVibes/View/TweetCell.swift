@@ -8,20 +8,32 @@
 import UIKit
 import SDWebImage
 
+protocol MainFeedControllerCellDelegate: AnyObject {
+    func infoLabelPressedSegue(tweet: Tweet)
+    func userProfImgPressSegue(_ cell: TweetCell)
+ }
+
 class TweetCell: UICollectionViewCell {
     
 
     //MARK: - Properties    
+    weak var delegate : MainFeedControllerCellDelegate?
+    
     var tweet: Tweet? {
         didSet{ configTweet() }
     }
     
-    private let profileImg: UIImageView = {
+    
+    private lazy var profileImg: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
         iv.setDimensions(width: 38, height: 38)
         iv.layer.cornerRadius = 38 / 2
         iv.layer.masksToBounds = true
+        //add lazy variable if your adding a tap gesture to a property
+        let imgTap = UITapGestureRecognizer(target: self, action: #selector(profileImgPressed))
+        iv.addGestureRecognizer(imgTap)
+        iv.isUserInteractionEnabled = true
         return iv
     }()
     
@@ -136,6 +148,14 @@ class TweetCell: UICollectionViewCell {
     
     @objc func profileImgPressed(){
         print("Profile image pressed")
+        guard let tweet = tweet else { return }
+        delegate?.userProfImgPressSegue(self)
+    }
+    
+    @objc func infoLabelPressed(){
+        print("infoLabelPressed")
+        guard let tweet = tweet else { return }
+        delegate?.infoLabelPressedSegue(tweet: tweet)
     }
     
     @objc func commentBtnPressed(){
@@ -157,6 +177,7 @@ class TweetCell: UICollectionViewCell {
     }
     
     
+    
     //MARK: - Helpers
     func configLine(){
         let line = UIView()
@@ -168,13 +189,18 @@ class TweetCell: UICollectionViewCell {
     func configTweet(){
         guard let tweet = tweet else { return }
 
-        tweetMsg.text = tweet.tweet
+        tweetMsg.text = tweet.tweet // Tweet msg
         
-        guard let getUrlFromUserImgString = URL(string: tweet.user.profileImgUrl) else { return }
+        guard let getUrlFromUserImgString = URL(string: tweet.user.profileImgUrl) else { return } // Image
         profileImg.sd_setImage(with: getUrlFromUserImgString)
+
         
-        let viewModel = TweetViewModel(tweet: tweet)
+        let viewModel = TweetViewModel(tweet: tweet) //info label
         infoLabel.attributedText = viewModel.userInfoText
+        infoLabel.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(infoLabelPressed))
+        infoLabel.addGestureRecognizer(tap)
+        
         
     }
     

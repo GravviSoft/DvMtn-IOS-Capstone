@@ -8,13 +8,12 @@
 import UIKit
 import SDWebImage
 
-//private let reuseIdentifier = "TweetCell"
 
-class MainFeedController: UICollectionViewController{
-    
+class MainFeedController: UICollectionViewController {
+        
     //MARK: - Properties
     
-    var myCollectionView: UICollectionView!
+//    var myCollectionView: UICollectionView!
     
     var user: User?{
         didSet{
@@ -48,9 +47,8 @@ class MainFeedController: UICollectionViewController{
     //MARK: - API
     func fetchTweets(){
         TweetService.shared.fetchTweet { tweets in
-//            print("Number of tweets \(tweets.count)")
-//            print(tweets)
-            self.tweets = tweets
+            let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
+            self.tweets = sorted
         }
     }
     
@@ -76,7 +74,6 @@ class MainFeedController: UICollectionViewController{
         image.layer.masksToBounds = true
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: image)
         
-        
         let tap = UITapGestureRecognizer(target: self, action: #selector(userImgPressed))
         image.addGestureRecognizer(tap)
         image.isUserInteractionEnabled = true
@@ -100,25 +97,30 @@ class MainFeedController: UICollectionViewController{
         button.tintColor = .iconBadgeTheme
         navigationItem.rightBarButtonItem = button
     }
+    
+    
+    
 }
 
-extension MainFeedController{
+extension MainFeedController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tweets.count
     }
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.reuseTweetCellId, for: indexPath) as! TweetCell
         cell.tweet = tweets[indexPath.row]
+        cell.delegate = self
         return cell
     }
+    
 }
 
+//MARK: - UICollectionViewFlowLayout
 extension MainFeedController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 200)
     }
-    
-    
+
     //Make sure the screen doesnt resize incorrectly on device rotate
 //    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 //        super.viewWillTransition(to: size, with: coordinator)
@@ -126,3 +128,19 @@ extension MainFeedController: UICollectionViewDelegateFlowLayout{
 //    }
 }
 
+
+extension MainFeedController: MainFeedControllerCellDelegate{    
+    func infoLabelPressedSegue(tweet: Tweet) {
+        let nav = UINavigationController(rootViewController: SingleTweetController(tweet: tweet))
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true, completion: nil)
+    }
+    
+    func userProfImgPressSegue(_ cell: TweetCell)  {
+        guard let user = cell.tweet?.user else { return }
+        let navlayout = UserProfileController(user: user)
+        let nav = UINavigationController(rootViewController: navlayout)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true, completion: nil)
+    }
+}
