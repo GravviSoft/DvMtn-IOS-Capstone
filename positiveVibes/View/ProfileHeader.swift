@@ -33,7 +33,6 @@ class ProfileHeader: UICollectionReusableView {
         image.layer.masksToBounds = true
         image.layer.borderColor = UIColor.iconBadgeTheme.cgColor
         image.layer.borderWidth = 3
-    
         return image
     }()
     
@@ -54,14 +53,14 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var editFollowBtn: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Edit Profile", for: .normal)
-        button.layer.borderColor = UIColor.iconBadgeTheme.cgColor
-        button.layer.borderWidth = 1.25
         button.setTitleColor(.iconBadgeTheme, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.addTarget(self, action: #selector(editFollowBtnPressed), for: .touchUpInside)
 //        button.backgroundColor = .systemPink
         button.setDimensions(width: 100, height: 36)
         button.layer.cornerRadius = 36 / 2
+        button.layer.borderColor = UIColor.iconBadgeTheme.cgColor
+        button.layer.borderWidth = 1.25
         return button
     }()
     
@@ -122,7 +121,7 @@ class ProfileHeader: UICollectionReusableView {
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .vibeTheme1
         
         filterBar.delegate = self
         
@@ -131,14 +130,6 @@ class ProfileHeader: UICollectionReusableView {
         
         containerView.addSubview(backBtn)
         backBtn.anchor(top: containerView.topAnchor, left: containerView.leftAnchor, paddingTop: 55, paddingLeft: 25)
-        
-//        addSubview(profileImg)
-//        guard let user = user else { return }
-//        guard let profileUrl = URL(string: user.profileImgUrl) else { return }
-//        profileImg.sd_setImage(with: profileUrl)
-//        guard let user = user else { return }
-//        guard let profileUrl = URL(string: user.profileImgUrl) else { return }
-//        profileImg.sd_setImage(with: profileUrl)
         
         addSubview(profileImg)
         profileImg.anchor(top: topAnchor, left: leftAnchor, paddingTop: 100, paddingLeft: 16)
@@ -204,14 +195,6 @@ class ProfileHeader: UICollectionReusableView {
     }
 }
 
-
-//MARK: - Helpers
-
-//func configImg(){
-//    guard let user = user else { return }
-//    guard let profileUrl = URL(string: user.profileImgUrl) else { return }
-//    profileImg.sd_setImage(with: profileUrl)
-//}
 
 
 //MARK: - UICollectionViewDelegate
