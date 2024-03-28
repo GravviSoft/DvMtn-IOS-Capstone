@@ -206,7 +206,8 @@ class Utilities {
     }
     
     func keyboardDoneBtn(withTF tv: UITextView, doneBtn doneSelector: Selector){
-        let keyboardToolbar = UIToolbar()
+//        let keyboardToolbar = UIToolbar()
+        let keyboardToolbar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 44.0)))
         keyboardToolbar.sizeToFit()
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
             target: nil, action: nil)

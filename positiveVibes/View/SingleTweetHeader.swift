@@ -1,46 +1,61 @@
 //
-//  TweetCell.swift
+//  SingleTweetHeader.swift
 //  positiveVibes
 //
-//  Created by Beau Enslow on 3/14/24.
+//  Created by Beau Enslow on 3/27/24.
 //
 
 import UIKit
 import SDWebImage
 
-protocol MainFeedControllerCellDelegate: AnyObject {
-    func infoLabelPressedSegue(tweet: Tweet)
-    func userProfImgPressSegue(_ cell: TweetCell)
- }
 
-class TweetCell: UICollectionViewCell {
-    
 
-    //MARK: - Properties    
-    weak var delegate : MainFeedControllerCellDelegate?
+class SingleTweetHeader: UICollectionReusableView {
+    //MARK: - Properties
     
-    var tweet: Tweet? {
-        didSet{ configTweet() }
+    
+    var tweet: Tweet?{
+        didSet{
+            print("Tweet info for this cell: \(tweet)")
+            configTweet()
+        }
     }
-    
     
     private lazy var profileImg: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
-        iv.setDimensions(width: 38, height: 38)
-        iv.layer.cornerRadius = 38 / 2
+        iv.setDimensions(width: 50, height: 50)
+        iv.layer.cornerRadius = 50 / 2
         iv.layer.masksToBounds = true
-        //add lazy variable if your adding a tap gesture to a property
-        let imgTap = UITapGestureRecognizer(target: self, action: #selector(profileImgPressed))
-        iv.addGestureRecognizer(imgTap)
-        iv.isUserInteractionEnabled = true
         return iv
+    }()
+    
+    private let fullName: UILabel = {
+       let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 22)
+        label.textColor = .iconBadgeTheme
+        label.text = "Beau Enslow"
+        return label
+    }()
+    
+    private let userName: UILabel = {
+       let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .lightGray
+        label.text = "@bobby"
+        return label
     }()
     
     private let tweetMsg: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.numberOfLines = 0
+//        label.preferredMaxLayoutWidth = view.frame.width // max width
+        label.text = "This is a sample text.\nWith a second line!" // the text to display in the label
+
+//        let height = label.intrinsicContentSize.height
+//        print("THis is the height \(height)")
+        
         return label
     }()
     
@@ -48,7 +63,7 @@ class TweetCell: UICollectionViewCell {
     
     private let optionsBtn: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        button.setImage(UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration(font: .systemFont(ofSize: 14.0))), for: .normal)
         button.tintColor = .iconBadgeTheme
         button.addTarget(self, action: #selector(optionBtnPressed), for: .touchUpInside)
         return button
@@ -105,41 +120,59 @@ class TweetCell: UICollectionViewCell {
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .vibeTheme1
         
-        //set a fixed width for the collection view cell
-        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
-                    
-        addSubview(profileImg)
-        profileImg.anchor(top: topAnchor, left: leftAnchor, paddingTop: 2, paddingLeft: 10)
-                
-        let labelStack = UIStackView(arrangedSubviews: [infoLabel, optionsBtn])
+        
+        addSubview(profileImg) //img
+//        let getUrlFromUserImgString = URL(string: tweet.user.profileImgUrl)
+//        profileImg.sd_setImage(with: getUrlFromUserImgString)
+        profileImg.anchor(top: safeAreaLayoutGuide.topAnchor, left: leftAnchor, paddingTop: 20, paddingLeft: 10)
+
+
+//        configInfoLabel() //label
+        addSubview(fullName)
+//        fullName.anchor(top: safeAreaLayoutGuide.topAnchor, left: profileImg.rightAnchor)
+
+//        tweetMsg.text = tweet.tweet // Tweet msg
+
+
+        let labelStack = UIStackView(arrangedSubviews: [fullName, optionsBtn])
         labelStack.axis = .horizontal
         labelStack.distribution = .equalSpacing
-
         
+        let nameStack = UIStackView(arrangedSubviews: [labelStack, userName])
+        nameStack.axis = .vertical
+        nameStack.spacing = 2
+        addSubview(nameStack)
+        
+
+//        addSubview(labelStack)
+        nameStack.anchor(top: safeAreaLayoutGuide.topAnchor, left: profileImg.rightAnchor, right: rightAnchor, paddingTop: 20, paddingLeft: 12, paddingRight: 12)
         let iconStack = UIStackView(arrangedSubviews: [commentBtn, retweetBtn, likeBtn, bookmarkBtn, shareBtn])
         iconStack.axis = .horizontal
         iconStack.distribution = .equalSpacing
-//        iconStack.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        let vertStack = UIStackView(arrangedSubviews: [labelStack, tweetMsg, iconStack])
+//
+        let vertStack = UIStackView(arrangedSubviews: [tweetMsg, iconStack])
         vertStack.axis = .vertical
-        vertStack.spacing = 8
-//        vertStack.distribution = .equalSpacing
+        vertStack.spacing = 10
+//
         addSubview(vertStack)
-        vertStack.anchor(top: topAnchor, left: profileImg.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 4,  paddingLeft: 12, paddingBottom: 12, paddingRight: 10)
-             
-        configLine()
+        vertStack.anchor(top: safeAreaLayoutGuide.topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 45,  paddingLeft: 12, paddingRight: 10)
         
-        
+        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
+//        heightAnchor.constraint(equalToConstant:  )
+//        setNeedsLayout()
+//        layoutIfNeeded()
+//        systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
+//        systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+//        systemLayoutSizeFitting(frame)
+        
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     //MARK: - Selectors
     @objc func optionBtnPressed(){
@@ -148,14 +181,8 @@ class TweetCell: UICollectionViewCell {
     
     @objc func profileImgPressed(){
         print("Profile image pressed")
-        guard let tweet = tweet else { return }
-        delegate?.userProfImgPressSegue(self)
-    }
-    
-    @objc func infoLabelPressed(){
-        print("infoLabelPressed")
-        guard let tweet = tweet else { return }
-        delegate?.infoLabelPressedSegue(tweet: tweet)
+//        guard let tweet = tweet else { return }
+//        self.delegate?.userProfImgPressSegue(tweet: tweet)
     }
     
     @objc func commentBtnPressed(){
@@ -176,33 +203,26 @@ class TweetCell: UICollectionViewCell {
         print("shareBtnPressed")
     }
     
+    @objc func infoLabelPressed(){
+        print("infoLabelPressed")
+//        guard let tweet = tweet else { return }
+//        delegate?.infoLabelPressedSegue(tweet: tweet)
+//
+    }
     
     
     //MARK: - Helpers
-    func configLine(){
-        let line = UIView()
-        line.backgroundColor = .systemGray
-        addSubview(line)
-        line.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 0.18)
-    }
-    
     func configTweet(){
         guard let tweet = tweet else { return }
+        let image = URL(string: tweet.user.profileImgUrl)
+        profileImg.sd_setImage(with: image)
+        
+        
+        let vm = SingleTweetViewModel(tweet: tweet)
+        fullName.attributedText = vm.fullNameLabel
+        userName.text = "@\(tweet.user.userName)"
+        tweetMsg.text = tweet.tweet
 
-        tweetMsg.text = tweet.tweet // Tweet msg
-        
-        guard let getUrlFromUserImgString = URL(string: tweet.user.profileImgUrl) else { return } // Image
-        profileImg.sd_setImage(with: getUrlFromUserImgString)
-
-        
-        let viewModel = TweetViewModel(tweet: tweet) //info label
-        infoLabel.attributedText = viewModel.userInfoText
-        infoLabel.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(infoLabelPressed))
-        infoLabel.addGestureRecognizer(tap)
-        
-        
     }
-    
     
 }

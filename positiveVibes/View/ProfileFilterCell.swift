@@ -40,7 +40,7 @@ class ProfileFilterCell: UICollectionViewCell {
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        backgroundColor = .twitterBlue
+//        backgroundColor = .vibeTheme1
         addSubview(titleLabel)
         
         titleLabel.center(inView: self)

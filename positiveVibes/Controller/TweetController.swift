@@ -27,7 +27,7 @@ class TweetController: UIViewController{
         return button
     }()
     
-    private let profileImg: UIImageView = {
+    private lazy var profileImg: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
         iv.setDimensions(width: 50, height: 50)
@@ -55,19 +55,17 @@ class TweetController: UIViewController{
         fatalError("init(coder:) has not been implemented")
     }
 
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        configKeyboard()
         configureUI()
-
+        configKeyboard()
     }
-    //MARK: - API
+
     //MARK: - Selector
     
     @objc func resignKeyboard(){
         view.endEditing(true)
-        print("resign")
     }
     
     @objc func postPressed(){
@@ -114,9 +112,9 @@ class TweetController: UIViewController{
     }
     
     func configProfileImg(){
-        view.addSubview(profileImg)
         guard let profileUrl = URL(string: user.profileImgUrl) else { return }
         profileImg.sd_setImage(with: profileUrl)
+        view.addSubview(profileImg)
         profileImg.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 25, paddingLeft: 25)
     }
     

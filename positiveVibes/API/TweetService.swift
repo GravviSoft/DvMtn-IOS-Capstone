@@ -18,8 +18,15 @@ class TweetService {
         Database.database().reference().child("tweets").childByAutoId().updateChildValues(info) { (error, result) in
             if let error = error {
                 completion(.failure(error))
+                
             }
+            guard let tweetID = result.key else { return }
+            Database.database().reference().child("user-tweets").child(uid).updateChildValues([tweetID: 1] as [String : Any]) { (error, result) in
+                if let error = error {
+                    completion(.failure(error))
+                }
             completion(.success("Nice work, you saved the tweet"))
+            }
         }
     }
     

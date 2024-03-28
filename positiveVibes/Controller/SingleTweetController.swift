@@ -12,79 +12,6 @@ class SingleTweetController: UICollectionViewController {
     //MARK: - Properties
     private let tweet: Tweet
     
-    private let profileImg: UIImageView = {
-        let iv = UIImageView()
-        iv.backgroundColor = .twitterBlue
-        iv.setDimensions(width: 48, height: 48)
-        iv.layer.cornerRadius = 48 / 2
-        iv.layer.masksToBounds = true
-        return iv
-    }()
-    
-    private let tweetMsg: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.numberOfLines = 0
-        return label
-    }()
-    
-    private let infoLabel = UILabel()
-    
-    private let optionsBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration(font: .systemFont(ofSize: 10.0))), for: .normal)
-        button.tintColor = .iconBadgeTheme
-        button.addTarget(self, action: #selector(optionBtnPressed), for: .touchUpInside)
-        return button
-    }()
-    
-    
-    private let commentBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "bubble"), for: .normal)
-        button.tintColor = .systemGray
-        button.setDimensions(width: 20, height: 20)
-        button.addTarget(self, action: #selector(commentBtnPressed), for: .touchUpInside)
-        return button
-    }()
-    
-    private let retweetBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "arrow.counterclockwise"), for: .normal)
-        button.tintColor = .systemGray
-        button.setDimensions(width: 20, height: 20)
-        button.addTarget(self, action: #selector(retweetBtnPressed), for: .touchUpInside)
-        return button
-    }()
-    
-    private let likeBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "suit.heart"), for: .normal)
-        button.tintColor = .systemGray
-        button.setDimensions(width: 20, height: 20)
-        button.addTarget(self, action: #selector(likeBtnPressed), for: .touchUpInside)
-        return button
-    }()
-    
-    private let bookmarkBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "bookmark"), for: .normal)
-        button.tintColor = .systemGray
-        button.setDimensions(width: 20, height: 20)
-        button.addTarget(self, action: #selector(bookmarkBtnPressed), for: .touchUpInside)
-        return button
-    }()
-    
-    private let shareBtn: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "square.and.arrow.up.on.square"), for: .normal)
-        button.tintColor = .systemGray
-        button.setDimensions(width: 20, height: 20)
-        button.addTarget(self, action: #selector(shareBtnPressed), for: .touchUpInside)
-        return button
-    }()
-    
-    
     //MARK: - Lifecycle
     init(tweet: Tweet) {
         self.tweet = tweet
@@ -100,6 +27,11 @@ class SingleTweetController: UICollectionViewController {
         configUI()
     }
     
+//    override func viewWillLayoutSubviews() {
+//        super.viewWillLayoutSubviews()
+//        collectionView.collectionViewLayout.invalidateLayout()
+//    }
+    
     
     //MARK: - Selectors
     @objc func backBtnPressed(){
@@ -107,78 +39,17 @@ class SingleTweetController: UICollectionViewController {
     }
     
     
-    @objc func optionBtnPressed(){
-        print("optionBtnPressed")
-    }
-    
-    @objc func profileImgPressed(){
-        print("Profile image pressed")
-//        guard let tweet = tweet else { return }
-//        self.delegate?.userProfImgPressSegue(tweet: tweet)
-    }
-    
-    @objc func commentBtnPressed(){
-        print("commentBtnPressed")
-    }
-    
-    @objc func retweetBtnPressed(){
-        print("retweetBtnPressed")
-    }
-    @objc func likeBtnPressed(){
-        print("likeBtnPressed")
-    }
-    
-    @objc func bookmarkBtnPressed(){
-        print("bookmarkBtnPressed")
-    }
-    @objc func shareBtnPressed(){
-        print("shareBtnPressed")
-    }
-    
-    @objc func infoLabelPressed(){
-        print("infoLabelPressed")
-//        guard let tweet = tweet else { return }
-//        delegate?.infoLabelPressedSegue(tweet: tweet)
-//        
-    }
+
     
     
     
     //MARK: - Helpers
     func configUI(){
-        view.backgroundColor = .twitterBlue
+        collectionView.backgroundColor = .vibeTheme1
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(TweetCell.self, forCellWithReuseIdentifier: K.reuseTweetCellId)
+        collectionView.register(SingleTweetHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: K.reuseSnglTwtHeader)
         configNavBar()
-//        
-//        view.addSubview(profileImg) //img
-//        let getUrlFromUserImgString = URL(string: tweet.user.profileImgUrl)
-//        profileImg.sd_setImage(with: getUrlFromUserImgString)
-//        profileImg.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 20, paddingLeft: 10)
-//                
-//        
-////        configInfoLabel() //label
-//        view.addSubview(infoLabel)
-//        infoLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: profileImg.rightAnchor)
-//        
-//        tweetMsg.text = tweet.tweet // Tweet msg
-//
-//
-//        let labelStack = UIStackView(arrangedSubviews: [infoLabel, optionsBtn])
-//        labelStack.axis = .horizontal
-//        labelStack.distribution = .equalSpacing
-//        
-//        view.addSubview(labelStack)
-//        labelStack.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: profileImg.rightAnchor, right: view.rightAnchor, paddingTop: 30, paddingLeft: 12, paddingRight: 12)
-//        let iconStack = UIStackView(arrangedSubviews: [commentBtn, retweetBtn, likeBtn, bookmarkBtn, shareBtn])
-//        iconStack.axis = .horizontal
-//        iconStack.distribution = .equalSpacing
-////        
-//        let vertStack = UIStackView(arrangedSubviews: [tweetMsg, iconStack])
-//        vertStack.axis = .vertical
-//        vertStack.spacing = 15
-////
-//        view.addSubview(vertStack)
-//        vertStack.anchor(top: profileImg.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 25,  paddingLeft: 12, paddingRight: 10)
         
     }
     
@@ -218,14 +89,28 @@ extension SingleTweetController {
     }
 }
 
-//MARK: - UICollectionViewDelegateFlowLayout
+//MARK: - UICollectionViewDelegateFlowLayout 
+//Height and width for collectionviews
 extension SingleTweetController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 200)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 350)
+        
+        // We get the actual header view
+        let header = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section)) as! SingleTweetHeader
+        //Perform auto layout for header + extra space
+        let computedSize = header.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 200.0
+        return CGSizeMake(view.frame.width, computedSize);
     }
-    
+}
+
+//MARK: - UICollectionViewHeader
+extension SingleTweetController{
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: K.reuseSnglTwtHeader, for: indexPath) as! SingleTweetHeader
+        header.tweet = tweet
+        return header
+    }    
 }

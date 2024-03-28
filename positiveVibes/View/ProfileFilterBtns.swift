@@ -13,15 +13,13 @@ protocol ProfileFilterBtnLineDelegate: AnyObject {
 
 class ProfileFilterBtns: UIView {
     //MARK: - Properties
-    
     weak var delegate: ProfileFilterBtnLineDelegate?
-    
 //    let labelCount = ProfileFilterOptions.allCases.count
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .white
+        cv.backgroundColor = .vibeTheme1
         cv.delegate = self
         cv.dataSource = self
         return cv
@@ -30,7 +28,7 @@ class ProfileFilterBtns: UIView {
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        backgroundColor = .white
+//        backgroundColor = .vibeTheme1
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: K.reuseProFilterCell)
         
         //make it so the first cell is selected

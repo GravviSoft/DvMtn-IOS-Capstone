@@ -50,13 +50,12 @@ class ProfileHeader: UICollectionReusableView {
         return btn
     }()
     
-    private lazy var editFollowBtn: UIButton = {
+    private let editFollowBtn: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Edit Profile", for: .normal)
         button.setTitleColor(.iconBadgeTheme, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.addTarget(self, action: #selector(editFollowBtnPressed), for: .touchUpInside)
-//        button.backgroundColor = .systemPink
         button.setDimensions(width: 100, height: 36)
         button.layer.cornerRadius = 36 / 2
         button.layer.borderColor = UIColor.iconBadgeTheme.cgColor
@@ -67,15 +66,23 @@ class ProfileHeader: UICollectionReusableView {
     private let fullName: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 25)
-        label.text = "Beau Enslow"
         return label
     }()
+    
+//    private let checkImg: UIView = {
+//       let iv = UIView()
+//        iv.backgroundColor = .red
+//        iv.setDimensions(width: 25, height: 25)
+//        let img = UIImageView()
+//        img.image = UIImage(systemName: "checkmark.seal.fill", withConfiguration: UIImage.SymbolConfiguration(font: .systemFont(ofSize: 18)))?.withTintColor(.twitterBlue)
+//        iv.addSubview(img)
+//        img.center(inView: iv)
+//        return iv
+//    }()
     
     private let userName: UILabel = {
         let label = UILabel()
         label.textColor = .systemGray
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.text = "@beauenslow"
         return label
     }()
     
@@ -96,10 +103,6 @@ class ProfileHeader: UICollectionReusableView {
     
     private lazy var followingLabel: UILabel = {
         let label = UILabel()
-        let title = NSMutableAttributedString(string: "0", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.iconBadgeTheme.cgColor])
-        title.append(NSAttributedString(string: " Following", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
-        label.attributedText = title
-       
         let tap = UITapGestureRecognizer(target: self, action: #selector(followingPressed))
         label.addGestureRecognizer(tap)
         label.isUserInteractionEnabled = true
@@ -107,10 +110,6 @@ class ProfileHeader: UICollectionReusableView {
     }()
     private lazy var followersLabel: UILabel = {
         let label = UILabel()
-        let title = NSMutableAttributedString(string: "2", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.iconBadgeTheme.cgColor])
-        title.append(NSAttributedString(string: " Followers", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
-        label.attributedText = title
-        
         let tap = UITapGestureRecognizer(target: self, action: #selector(followersPressed))
         label.addGestureRecognizer(tap)
         label.isUserInteractionEnabled = true
@@ -136,7 +135,7 @@ class ProfileHeader: UICollectionReusableView {
         
         addSubview(editFollowBtn)
         editFollowBtn.anchor(top: containerView.bottomAnchor, right: rightAnchor, paddingTop: 12, paddingRight: 16)
-        
+                
         let stack = UIStackView(arrangedSubviews: [fullName, userName])
         stack.axis = .vertical
         stack.spacing = 2
@@ -152,7 +151,7 @@ class ProfileHeader: UICollectionReusableView {
         addSubview(followStack)
         followStack.anchor(top: bioText.bottomAnchor, left: leftAnchor, paddingTop: 8, paddingLeft: 16)
 
-        
+
         addSubview(filterBar)
         filterBar.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 50)
         
@@ -189,9 +188,13 @@ class ProfileHeader: UICollectionReusableView {
         guard let profileUrl = URL(string: user.profileImgUrl) else { return }
         profileImg.sd_setImage(with: profileUrl)
         
+        let model = ProfileHeaderViewModel(user: user)
         fullName.text = user.fullName
-        userName.text = "@\(user.userName)"
+        followingLabel.attributedText = model.followingLabel
+        followersLabel.attributedText = model.followersLabel
+        userName.attributedText = model.userNameLabel
         
+        editFollowBtn.setTitle(model.editOrFollowBtn, for: .normal)
     }
 }
 

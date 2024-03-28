@@ -43,7 +43,8 @@ class UserProfileController: UICollectionViewController {
 //    
     //MARK: - Helpers
     func configUI(){
-        view.backgroundColor = .red
+//        view.backgroundColor = .red
+        collectionView.backgroundColor = .vibeTheme1
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(TweetCell.self, forCellWithReuseIdentifier: K.reuseTweetCellId)
         collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: K.reuseProfileHeader)
