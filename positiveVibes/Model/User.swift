@@ -15,6 +15,8 @@ struct User {
     let profileImgUrl: String
     let uid: String
     var isCurrentUser: Bool { return  Auth.auth().currentUser?.uid ?? "" == uid }
+    var followers = 0
+    var following = 0
     
     init(uid: String, user: [String: Any]) {
         self.uid = uid
@@ -24,3 +26,5 @@ struct User {
         self.profileImgUrl = user["profileImgUrl"] as? String ?? ""
     }
 }
+
+

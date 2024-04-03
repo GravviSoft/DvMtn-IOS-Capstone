@@ -12,6 +12,12 @@ class SingleTweetController: UICollectionViewController {
     //MARK: - Properties
     private let tweet: Tweet
     
+    private var replies = [Tweet]() {
+        didSet{
+            collectionView.reloadData()
+        }
+    }
+    
     //MARK: - Lifecycle
     init(tweet: Tweet) {
         self.tweet = tweet
@@ -25,6 +31,11 @@ class SingleTweetController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        fetchReplyTweets()
+//        if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+//           flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize  //Set the autolayout for the collectionview cells
+//         }
+//        fetchUserTweets()
     }
     
 //    override func viewWillLayoutSubviews() {
@@ -40,7 +51,18 @@ class SingleTweetController: UICollectionViewController {
     
     
 
-    
+//    //MARK: - API
+//    func fetchUserTweets(){
+//        TweetService.shared.fetchUserTweets(uid: tweet.user.uid) { tweets in
+//            print(tweets)
+//        }
+//        print("fetchUserTweets")
+//    }
+    func fetchReplyTweets(){
+        TweetService.shared.fetchReplyTweets(tweetUID: tweet.tweetID) { result in
+            self.replies = result
+        }
+    }
     
     
     //MARK: - Helpers
@@ -81,10 +103,11 @@ class SingleTweetController: UICollectionViewController {
 //MARK: - UICollectionViewDataSource - TweetCell
 extension SingleTweetController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return replies.count
     }
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.reuseTweetCellId, for: indexPath) as! TweetCell
+        cell.tweet = replies[indexPath.row]
         return cell
     }
 }
@@ -93,15 +116,17 @@ extension SingleTweetController {
 //Height and width for collectionviews
 extension SingleTweetController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 200)
+        let viewModel = TweetViewModel(tweet: replies[indexPath.row])
+        let height = viewModel.cellAutoSize(forWidth: view.frame.width).height
+        return CGSize(width: collectionView.frame.width, height: height + 80)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-        // We get the actual header view
+
         let header = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section)) as! SingleTweetHeader
-        //Perform auto layout for header + extra space
-        let computedSize = header.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 200.0
+        let addSize = replies.count > 0 ? CGFloat(80) : CGFloat(200)
+        let computedSize = header.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + addSize
+        collectionView.reloadData()
         return CGSizeMake(view.frame.width, computedSize);
     }
 }

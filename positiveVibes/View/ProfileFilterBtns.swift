@@ -8,13 +8,17 @@
 import UIKit
 
 protocol ProfileFilterBtnLineDelegate: AnyObject {
-    func filterView(_ view: ProfileFilterBtns, cv: UICollectionView, didSelect indexPath: IndexPath )
+    func filterView(_ view: ProfileFilterBtns, cv: UICollectionView, didSelect indexPath: IndexPath)
+
 }
+
+
 
 class ProfileFilterBtns: UIView {
     //MARK: - Properties
     weak var delegate: ProfileFilterBtnLineDelegate?
 //    let labelCount = ProfileFilterOptions.allCases.count
+
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -26,8 +30,12 @@ class ProfileFilterBtns: UIView {
     }()
     
     //MARK: - Lifecycle
+
     override init(frame: CGRect) {
         super.init(frame: frame)
+
+        
+
 //        backgroundColor = .vibeTheme1
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: K.reuseProFilterCell)
         
@@ -58,6 +66,8 @@ extension ProfileFilterBtns: UICollectionViewDataSource {
         let option = ProfileFilterOptions(rawValue: indexPath.row)
         cell.titleOption = option
         print(option?.description ?? "")
+        print("OPtions\(option?.rawValue ?? 0)")
+//        listDelegate?.filterGetIndex(option?.rawValue ?? 0)
         return cell
     }
 }
@@ -66,8 +76,11 @@ extension ProfileFilterBtns: UICollectionViewDataSource {
 extension ProfileFilterBtns: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.filterView(self, cv: collectionView, didSelect: indexPath)
+
     }
 }
+
+
 
 //MARK: - UICollectionViewDelegateFlowLayout
 extension ProfileFilterBtns: UICollectionViewDelegateFlowLayout {
@@ -78,9 +91,3 @@ extension ProfileFilterBtns: UICollectionViewDelegateFlowLayout {
         return 0
     }
 }
-
-//extension ProfileFilterBtns:
-
-//extension ProfileFilterBtns: UICollectionViewDelegate {
-//
-//}

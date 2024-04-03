@@ -145,6 +145,15 @@ class Utilities {
         return button
     }
     
+    func replyToBtn(text str: String, boldText boldStr: String, andSelector selector: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        let textTitle = NSMutableAttributedString(string: str, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+        textTitle.append(NSAttributedString(string: "@\(boldStr)", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: UIColor.twitterBlue]))
+        button.setAttributedTitle(textTitle, for: .normal)
+        button.addTarget(self, action: selector, for: .touchUpInside)
+        return button
+    }
+    
     func tapRootViewDismissCurrent(withView view: UIViewController){
         //Step 1: Tap into rootviewcontroller
         guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
@@ -194,7 +203,7 @@ class Utilities {
     }
     
     func keyboardBtns(withTF tf: UITextField, nextBtn nextSelector: Selector, doneBtn doneSelector: Selector){
-        let keyboardToolbar = UIToolbar()
+        let keyboardToolbar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 44.0)))
         keyboardToolbar.sizeToFit()
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
             target: nil, action: nil)
@@ -206,7 +215,6 @@ class Utilities {
     }
     
     func keyboardDoneBtn(withTF tv: UITextView, doneBtn doneSelector: Selector){
-//        let keyboardToolbar = UIToolbar()
         let keyboardToolbar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 44.0)))
         keyboardToolbar.sizeToFit()
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,

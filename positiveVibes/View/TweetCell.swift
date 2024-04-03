@@ -9,8 +9,9 @@ import UIKit
 import SDWebImage
 
 protocol MainFeedControllerCellDelegate: AnyObject {
-    func infoLabelPressedSegue(tweet: Tweet)
+    func infoLabelPressedSegue(_ tweet: Tweet)
     func userProfImgPressSegue(_ cell: TweetCell)
+    func commentBtnPressedSegue(_ tweet: Tweet)
  }
 
 class TweetCell: UICollectionViewCell {
@@ -147,19 +148,20 @@ class TweetCell: UICollectionViewCell {
     }
     
     @objc func profileImgPressed(){
-        print("Profile image pressed")
-        guard let tweet = tweet else { return }
         delegate?.userProfImgPressSegue(self)
     }
     
     @objc func infoLabelPressed(){
         print("infoLabelPressed")
         guard let tweet = tweet else { return }
-        delegate?.infoLabelPressedSegue(tweet: tweet)
+        delegate?.infoLabelPressedSegue(tweet)
     }
     
     @objc func commentBtnPressed(){
         print("commentBtnPressed")
+        guard let tweet = tweet else { return }
+        delegate?.commentBtnPressedSegue(tweet)
+
     }
     
     @objc func retweetBtnPressed(){

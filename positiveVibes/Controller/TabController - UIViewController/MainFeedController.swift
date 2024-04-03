@@ -37,7 +37,11 @@ class MainFeedController: UICollectionViewController {
     
     //MARK: - Selectors
     @objc func userImgPressed(){
-        print("img pressed")
+        guard let user = user else { return }
+        let navlayout = UserProfileController(user: user)
+        let nav = UINavigationController(rootViewController: UserProfileController(user: user))
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true, completion: nil)
     }
     
     @objc func logUserOut(){
@@ -130,8 +134,15 @@ extension MainFeedController: UICollectionViewDelegateFlowLayout{
 }
 
 
-extension MainFeedController: MainFeedControllerCellDelegate{    
-    func infoLabelPressedSegue(tweet: Tweet) {
+extension MainFeedController: MainFeedControllerCellDelegate{
+    func commentBtnPressedSegue(_ tweet: Tweet) {
+        guard let user = user else { return }
+        let nav = UINavigationController(rootViewController: TweetController(user: tweet.user, config: .reply(tweet, user)))
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true, completion: nil)
+    }
+    
+    func infoLabelPressedSegue(_ tweet: Tweet) {
         let nav = UINavigationController(rootViewController: SingleTweetController(tweet: tweet))
         nav.modalPresentationStyle = .fullScreen
         present(nav, animated: true, completion: nil)
@@ -140,7 +151,7 @@ extension MainFeedController: MainFeedControllerCellDelegate{
     func userProfImgPressSegue(_ cell: TweetCell)  {
         guard let user = cell.tweet?.user else { return }
         let navlayout = UserProfileController(user: user)
-        let nav = UINavigationController(rootViewController: navlayout)
+        let nav = UINavigationController(rootViewController: UserProfileController(user: user))
         nav.modalPresentationStyle = .fullScreen
         present(nav, animated: true, completion: nil)
     }

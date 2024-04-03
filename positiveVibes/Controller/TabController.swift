@@ -38,7 +38,7 @@ class TabController: UITabBarController {
     @objc func tweetBtnPressed(){
         print("Btn pressed")
         guard let user = user else { return }
-        let nav = UINavigationController(rootViewController: TweetController(user: user))
+        let nav = UINavigationController(rootViewController: TweetController(user: user, config: .tweet))
         nav.modalPresentationStyle = .fullScreen
         present(nav, animated: true, completion: nil)
     }

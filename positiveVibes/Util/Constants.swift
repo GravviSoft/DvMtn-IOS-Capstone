@@ -12,4 +12,5 @@ enum K {
     static let reuseProfileHeader = "ProfileHeader"
     static let reuseProFilterCell = "ProfileFilterCell"
     static let reuseSnglTwtHeader = "SingleTweetHeader"
+    static let reuseSearchUserCell = "SearchUserCell"
 }

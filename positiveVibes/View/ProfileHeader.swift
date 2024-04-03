@@ -9,19 +9,37 @@ import UIKit
 
 protocol UserProfileHeaderDelegate: AnyObject {
     func backBtnPressed()
+    func handleEditFollowBtn(_ text: String)
+    func filterTweetList(_ indexPath: Int)
 }
+
+
 
 class ProfileHeader: UICollectionReusableView {
     
     //MARK: - Properties
-    var user: User?{
+    var user: User? {
         didSet{
-            print("This is the user info: \(user)")
             configHeader()
         }
     }
     
+    
+    var isFollowing: Bool? {
+        didSet{
+            configFollowing()
+        }
+    }
+    
+//    var listNum: Int? {
+//        didSet{
+//            guard let listNum = listNum else { return }
+//            delegate?.filterTweetList(listNum)
+//        }
+//    }
+    
     weak var delegate: UserProfileHeaderDelegate?
+    
     
     private let filterBar = ProfileFilterBtns()
     
@@ -153,10 +171,10 @@ class ProfileHeader: UICollectionReusableView {
 
 
         addSubview(filterBar)
-        filterBar.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 50)
+        filterBar.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingBottom: 10, height: 45)
         
-        addSubview(bottomLine)
-        bottomLine.anchor(bottom: bottomAnchor, width: frame.width / CGFloat(ProfileFilterOptions.allCases.count), height: 2)
+//        addSubview(bottomLine)
+//        bottomLine.anchor(bottom: bottomAnchor, paddingBottom: 10, width: frame.width / CGFloat(ProfileFilterOptions.allCases.count), height: 2)
         
     }
     
@@ -176,8 +194,10 @@ class ProfileHeader: UICollectionReusableView {
     @objc func backBtnPressed(){
         delegate?.backBtnPressed()
     }
+    
     @objc func editFollowBtnPressed(){
-        print("editFollowBtnPressed")
+        guard let btnText = editFollowBtn.titleLabel?.text else { return }
+        delegate?.handleEditFollowBtn(btnText)
     }
     
     
@@ -185,29 +205,44 @@ class ProfileHeader: UICollectionReusableView {
 
     func configHeader(){
         guard let user = user else { return }
+        
         guard let profileUrl = URL(string: user.profileImgUrl) else { return }
         profileImg.sd_setImage(with: profileUrl)
         
-        let model = ProfileHeaderViewModel(user: user)
+        guard let isFollowing = isFollowing else { return }
+        let model = ProfileHeaderViewModel(user: user, isFollowing: isFollowing)
         fullName.text = user.fullName
         followingLabel.attributedText = model.followingLabel
         followersLabel.attributedText = model.followersLabel
         userName.attributedText = model.userNameLabel
         
+    }
+    
+    func configFollowing() {
+        guard let user = user else { return }
+        guard let isFollowing = isFollowing else { return }
+        let model = ProfileHeaderViewModel(user: user, isFollowing: isFollowing)
         editFollowBtn.setTitle(model.editOrFollowBtn, for: .normal)
+
     }
 }
 
 
 
 //MARK: - UICollectionViewDelegate
-extension ProfileHeader: ProfileFilterBtnLineDelegate{
+extension ProfileHeader: ProfileFilterBtnLineDelegate {
     func filterView(_ view: ProfileFilterBtns, cv: UICollectionView, didSelect indexPath: IndexPath) {
+        delegate?.filterTweetList(indexPath.last ?? 0)
+
         guard let cell = view.collectionView(cv, cellForItemAt: indexPath) as? ProfileFilterCell else { return }
-        print(indexPath)
-        let xPosition = cell.frame.origin.x
-        UIView.animate(withDuration: 0.3){
-            self.bottomLine.frame.origin.x = xPosition
-        }
+
+//        let xPosition = cell.frame.origin.x
+//        UIView.animate(withDuration: 0.3){
+//            self.bottomLine.frame.origin.x = xPosition
+//        }
+        
+//        listNum = indexPath.last ?? 0
+
     }
+
 }

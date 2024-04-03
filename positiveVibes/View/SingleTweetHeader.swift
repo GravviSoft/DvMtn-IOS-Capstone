@@ -8,11 +8,15 @@
 import UIKit
 import SDWebImage
 
+protocol SingleTweetCellSizeDelegate {
+    func getWidthSize() -> CGFloat
+}
 
 
 class SingleTweetHeader: UICollectionReusableView {
     //MARK: - Properties
     
+    var delegate: SingleTweetCellSizeDelegate?
     
     var tweet: Tweet?{
         didSet{
@@ -167,6 +171,9 @@ class SingleTweetHeader: UICollectionReusableView {
 
 //        systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 //        systemLayoutSizeFitting(frame)
+        let size = tweetMsg.intrinsicContentSize.width
+        
+
         
     }
     
@@ -187,6 +194,7 @@ class SingleTweetHeader: UICollectionReusableView {
     
     @objc func commentBtnPressed(){
         print("commentBtnPressed")
+//        let nav = UINavigationController(
     }
     
     @objc func retweetBtnPressed(){
@@ -212,6 +220,10 @@ class SingleTweetHeader: UICollectionReusableView {
     
     
     //MARK: - Helpers
+//    func getSizeCell(size: CGSize){
+//        delegate?.getWidthSize(size)
+//    }
+    
     func configTweet(){
         guard let tweet = tweet else { return }
         let image = URL(string: tweet.user.profileImgUrl)

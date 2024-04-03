@@ -47,4 +47,26 @@ struct TweetViewModel {
         self.user = tweet.user
         
     }
+    
+    func cellAutoSize(forWidth width: CGFloat) -> CGSize{
+        let measureLabel = UILabel()
+        measureLabel.text = tweet.tweet
+        measureLabel.numberOfLines = 0
+        measureLabel.lineBreakMode = .byWordWrapping
+        measureLabel.translatesAutoresizingMaskIntoConstraints  = false
+        measureLabel.widthAnchor.constraint(equalToConstant: width).isActive = true
+        return measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+    }
+    
+    func headerAutoSize(withText text: String, forWidth width: CGFloat) -> CGSize{
+        let measureLabel = UILabel()
+        measureLabel.text = text
+        measureLabel.numberOfLines = 0
+        measureLabel.lineBreakMode = .byWordWrapping
+        measureLabel.translatesAutoresizingMaskIntoConstraints  = false
+        measureLabel.widthAnchor.constraint(equalToConstant: width).isActive = true
+        return measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+
+    }
+    
 }

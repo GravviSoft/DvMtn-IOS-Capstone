@@ -12,14 +12,14 @@ enum ProfileFilterOptions: Int, CaseIterable {
     case tweets
     case replies
     case likes
-    case media
+//    case media
     
     var description: String {
         switch self {
         case .tweets: return "Tweets"
         case .replies: return "Replies"
         case .likes: return "Likes"
-        case .media: return "Media"
+//        case .media: return "Media"
         }
     }
 }
@@ -28,15 +28,16 @@ enum ProfileFilterOptions: Int, CaseIterable {
 struct ProfileHeaderViewModel {
     let user: User
     
-    init(user: User) {
+    var isFollowing: Bool
+        
+    init(user: User, isFollowing: Bool) {
         self.user = user
+        self.isFollowing = isFollowing
     }
     
     var editOrFollowBtn: String {
         var title = String()
-        let currentUser = Auth.auth().currentUser?.uid ?? ""
-        title = currentUser == user.uid ? "Edit Profile" : "Follow"
-        print("Button text is \(title): Since users uid \(currentUser) = \(user.uid)")
+        title = user.isCurrentUser ? "Edit Profile" : ( isFollowing ? "Following" : "Follow")
         return title
     }
     
@@ -55,12 +56,12 @@ struct ProfileHeaderViewModel {
     }
 
     var followingLabel: NSAttributedString  {
-        let title = NSMutableAttributedString(string: "0", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.iconBadgeTheme.cgColor])
+        let title = NSMutableAttributedString(string: "\(user.followers)", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.iconBadgeTheme.cgColor])
         title.append(NSAttributedString(string: " Following", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
         return title
     }
     var followersLabel: NSAttributedString  {
-        let title = NSMutableAttributedString(string: "2", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.iconBadgeTheme.cgColor])
+        let title = NSMutableAttributedString(string: "\(user.following)", attributes: [.font : UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.iconBadgeTheme.cgColor])
         title.append(NSAttributedString(string: " Followers", attributes: [.font : UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
         return title
     }
