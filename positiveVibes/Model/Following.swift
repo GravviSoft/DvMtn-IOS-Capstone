@@ -11,6 +11,11 @@ struct Following {
     var isFollowing: Bool
     var followers: Int
     var following: Int
+    var liked = false
+    var didLike = false
+    var didRetweet = false
+    var didBookmark = false
+    var tweetReplies = 0
     
     init(isFollowing: Bool, followers: Int, following: Int) {
         self.isFollowing = isFollowing

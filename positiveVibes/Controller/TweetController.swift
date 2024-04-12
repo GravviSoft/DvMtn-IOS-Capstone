@@ -19,7 +19,7 @@ class TweetController: UIViewController{
     
     //MARK: - Properties
     private let user: User
-    
+        
     private let config: UploadTweetConfiguration
     
     
@@ -159,8 +159,6 @@ class TweetController: UIViewController{
         profileImg.sd_setImage(with: profileUrl)
 
         
-        
-    
     }
     
     func configKeyboard(){

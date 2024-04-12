@@ -24,7 +24,7 @@ class ProfileFilterCell: UICollectionViewCell {
     
     private let bottomLine: UIView = {
         let uv = UIView()
-        uv.backgroundColor = .white
+        uv.backgroundColor = .vibeTheme1
         return uv
     }()
     
@@ -32,7 +32,7 @@ class ProfileFilterCell: UICollectionViewCell {
         didSet{
             titleLabel.font = isSelected ? UIFont.boldSystemFont(ofSize: 16) : UIFont.systemFont(ofSize: 16)
             titleLabel.textColor = isSelected ? .twitterBlue : .lightGray
-            bottomLine.backgroundColor = isSelected ? .twitterBlue : .white
+            bottomLine.backgroundColor = isSelected ? .twitterBlue : .vibeTheme1
 
         }
     }

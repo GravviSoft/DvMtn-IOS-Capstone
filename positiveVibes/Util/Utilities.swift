@@ -164,6 +164,17 @@ class Utilities {
         //Step 3: Dismiss current view
         view.dismiss(animated: true, completion: nil)
     }
+    
+    func reloadCollectViewOnDismiss(withView view: UIViewController, cvController: UICollectionViewController){
+        //Step 1: Tap into rootviewcontroller
+        guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+        guard let firstWindow = window.windows.first else { return }
+        guard let tab = firstWindow.rootViewController as? TabController else { return }
+        //Step 2: Perform configureUI func from inside TabController
+        tab.configureUI()
+        //Step 3: Dismiss current view
+        view.dismiss(animated: true, completion: nil)
+    }
 
     func presentUIAlert(_ error: String, view: UIViewController){
         let alertController = UIAlertController(title: nil, message: error, preferredStyle: .alert)
@@ -185,8 +196,10 @@ class Utilities {
         // pass string, font, LableWidth
         let label:UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: CGFloat.greatestFiniteMagnitude))
 //                                                    CGFloat.greatestFiniteMagnitude))
+//        let label:UILabel = UILabel(frame: CGRect(x: 72, y: CGFloat.greatestFiniteMagnitude, width: width - 72, height: CGFloat.greatestFiniteMagnitude))
+
          label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
+         label.lineBreakMode = .byWordWrapping
 //         label.lineBreakMode = NSLineBreakMode.byWordWrapping
          label.text = text
          label.sizeToFit()
@@ -200,6 +213,17 @@ class Utilities {
 //        }
         
         return label.bounds.size.height
+    }
+    
+    func cellAutoSize(withText text: String, forWidth width: CGFloat) -> CGSize{
+        let measureLabel = UILabel(frame: CGRect(x: 72, y: CGFloat.greatestFiniteMagnitude, width: width - 72, height: CGFloat.greatestFiniteMagnitude))
+//        let measureLabel = UILabel()
+        measureLabel.text = text
+        measureLabel.numberOfLines = 0
+        measureLabel.lineBreakMode = .byWordWrapping
+        measureLabel.translatesAutoresizingMaskIntoConstraints  = false
+        measureLabel.widthAnchor.constraint(equalToConstant: width).isActive = true
+        return measureLabel.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
     func keyboardBtns(withTF tf: UITextField, nextBtn nextSelector: Selector, doneBtn doneSelector: Selector){
@@ -225,6 +249,15 @@ class Utilities {
         tv.inputAccessoryView = keyboardToolbar
     }
     
+     func animateIcon(_ btn: UIButton) {
+        UIView.animate(withDuration: 0.1, animations: {
+            btn.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }) { _ in
+            UIView.animate(withDuration: 0.1) {
+                btn.transform = .identity
+            }
+        }
+    }
     
     
 }

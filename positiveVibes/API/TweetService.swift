@@ -31,22 +31,76 @@ class TweetService {
     
     func fetchTweet(completion: @escaping ([Tweet]) -> Void){
         var tweets = [Tweet]()
-        Database.database().reference().child("tweets").observe(.childAdded) { snapshot in
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("tweets").observe(.childAdded) { snapshot, err in
             //.childAdded monitors your database for anytime a new child is added. IE - a new tweet is added
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             //get user data
             guard let uid = dictionary["uid"] as? String else { return }
-            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { userSnap in
+            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { userSnap, err  in
                 guard let userDict = userSnap.value as? [String: Any] else { return }
                 let user = User(uid: uid, user: userDict)
                 let tweetID = snapshot.key
-                let tweet = Tweet(user: user,tweetID: tweetID, tweetDict: dictionary)
-                tweets.append(tweet)
-                completion(tweets)
+                var tweet = Tweet(user: user,tweetID: tweetID, tweetDict: dictionary)
+//                tweets.append(tweet)
+                var data = Following(isFollowing: false, followers: 0, following: 0)
 
+                Database.database().reference().child("user-likes").child(userID).child(tweetID).observeSingleEvent(of: .value) { didLike in
+                    let didLike = didLike.exists()
+                    data.didLike = didLike
+                    Database.database().reference().child("user-retweets").child(userID).child(tweetID).observeSingleEvent(of: .value) { didRetweet, err  in
+                        let didRetweet = didRetweet.exists()
+                        data.didRetweet = didRetweet
+                        Database.database().reference().child("user-bookmark").child(userID).child(tweetID).observeSingleEvent(of: .value) { didBookmark, err  in
+                            let didBookmark = didBookmark.exists()
+                            data.didBookmark = didBookmark
+                            Database.database().reference().child("tweet-replies").child(tweetID).observe(.value) { replyCnt  in
+//                                print("REPLY COUNT \(replyCnt.childrenCount)")
+                                tweet.replyCount = Int(replyCnt.childrenCount)
+                                Database.database().reference().child("user-followers").child(uid).child(userID).observeSingleEvent(of: .value) { isFollowing in
+                                    data.isFollowing = isFollowing.exists()
+                                    tweet.followInfo = data
+                                    tweets.append(tweet)
+                                    completion(tweets)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+    
+    func fetchTweetFollowing(completion: @escaping ([Following]) -> Void){
+        var followList = [Following]()
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("tweets").observe(.childAdded) { snapshot, err  in
+            //.childAdded monitors your database for anytime a new child is added. IE - a new tweet is added
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            //get user data
+            let tweetID = snapshot.key
+            
+            var data = Following(isFollowing: false, followers: 0, following: 0)
+
+            Database.database().reference().child("user-likes").child(userID).child(tweetID).observeSingleEvent(of: .value) { didLike in
+                let didLike = didLike.exists()
+                data.didLike = didLike
+                Database.database().reference().child("user-retweets").child(userID).child(tweetID).observeSingleEvent(of: .value) { didRetweet, err  in
+                    let didRetweet = didRetweet.exists()
+                    data.didRetweet = didRetweet
+                    Database.database().reference().child("user-bookmark").child(userID).child(tweetID).observeSingleEvent(of: .value) { didBookmark, err  in
+                        let didBookmark = didBookmark.exists()
+                        data.didBookmark = didBookmark
+                        print(data)
+                        followList.append(data)
+                        completion(followList)
+                        
+                    }
+                }
+            }
+        }
+    }
+    
     
     func fetchUserTweets(for user: User, completion: @escaping ([Tweet]) -> ()){
         var tweets = [Tweet]()
@@ -116,4 +170,122 @@ class TweetService {
             }
         }
     }
+    
+    func fetchUserLikes(withUser user: User, completion: @escaping ([Tweet])->()){
+        var tweets = [Tweet]()
+        Database.database().reference().child("user-likes").child(user.uid).observe(.childAdded) { tweetUID in
+            let tweetID = tweetUID.key
+            Database.database().reference().child("tweets").child(tweetID).observeSingleEvent(of: .value) { snapshot in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                //get user data
+                guard let uid = dictionary["uid"] as? String else { return }
+                Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { userSnap, err  in
+                    guard let userDict = userSnap.value as? [String: Any] else { return }
+                    let user = User(uid: uid, user: userDict)
+                    let tweetID = snapshot.key
+                    var tweet = Tweet(user: user,tweetID: tweetID, tweetDict: dictionary)
+                    print(tweet)
+                    tweets.append(tweet)
+                    completion(tweets)
+                }
+            }
+        }
+    }
+    
+    func fetchUserRetweets(withUser user: User, completion: @escaping ([Tweet])->()){
+        var tweets = [Tweet]()
+        Database.database().reference().child("user-retweets").child(user.uid).observe(.childAdded) { tweetUID in
+            let tweetID = tweetUID.key
+            Database.database().reference().child("tweets").child(tweetID).observeSingleEvent(of: .value) { snapshot in
+                guard let dictionary = snapshot.value as? [String: Any] else { return }
+                guard let uid = dictionary["uid"] as? String else { return }  //get user data
+                Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { userSnap, err  in
+                    guard let userDict = userSnap.value as? [String: Any] else { return }
+                    let user = User(uid: uid, user: userDict)
+                    let tweetID = snapshot.key
+                    var tweet = Tweet(user: user,tweetID: tweetID, tweetDict: dictionary)
+                    print(tweet)
+                    tweets.append(tweet)
+                    completion(tweets)
+                }
+            }
+        }
+    }
+    
+    
+    
+    func likeTweet(tweet: Tweet, completion: @escaping (Int, Bool) -> Void){
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        print(tweet.followInfo!.didLike)
+        print("tweet.likes \(tweet.likes)")
+        let likes = !tweet.followInfo!.didLike ? tweet.likes + 1 : tweet.likes - 1
+        print("\(tweet.likes) = \(likes)")
+        Database.database().reference().child("tweets").child(tweet.tweetID).child("likes").setValue(likes)
+        if !tweet.followInfo!.didLike {
+            Database.database().reference().child("tweet-likes").child(tweet.tweetID).updateChildValues([userID : 1]) { (error, result) in
+            }
+            Database.database().reference().child("user-likes").child(userID).updateChildValues([tweet.tweetID : 1]) { (error, result) in
+            }
+        } else {
+            Database.database().reference().child("tweet-likes").child(tweet.tweetID).child(userID).removeValue() { (error, ref)  in
+            }
+            Database.database().reference().child("user-likes").child(userID).child(tweet.tweetID).removeValue() { (error, ref)  in
+            }
+        }
+        completion(likes, !tweet.followInfo!.didLike)
+    }
+    
+    func reTweet(tweet: Tweet, completion: @escaping (Int, Bool) -> Void){
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        print(tweet.followInfo!.didRetweet)
+        print("tweet.retweetCount \(tweet.retweetCount)")
+        let retweetCount = !tweet.followInfo!.didRetweet ? tweet.retweetCount + 1 : tweet.retweetCount - 1
+        print("\(tweet.retweetCount) = \(retweetCount)")
+        Database.database().reference().child("tweets").child(tweet.tweetID).child("retweetCount").setValue(retweetCount)
+        print(tweet)
+        if !tweet.followInfo!.didRetweet {
+            
+            Database.database().reference().child("tweet-retweets").child(tweet.tweetID).updateChildValues([userID : 1]) { (error, result) in
+            }
+            Database.database().reference().child("user-retweets").child(userID).updateChildValues([tweet.tweetID : 1]) { (error, result) in
+            }
+        } else {
+            Database.database().reference().child("tweet-retweets").child(tweet.tweetID).child(userID).removeValue() { (error, ref)  in
+            }
+            Database.database().reference().child("user-retweets").child(userID).child(tweet.tweetID).removeValue() { (error, ref)  in
+            }
+        }
+        completion(retweetCount, !tweet.followInfo!.didRetweet)
+    }
+    
+    func bookmarkTweet(tweet: Tweet, completion: @escaping (Bool) -> Void){
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        print(tweet.followInfo!.didBookmark)
+        print(tweet)
+        if !tweet.followInfo!.didBookmark {
+            
+            Database.database().reference().child("tweet-bookmark").child(tweet.tweetID).updateChildValues([userID : 1]) { (error, result) in
+            }
+            Database.database().reference().child("user-bookmark").child(userID).updateChildValues([tweet.tweetID : 1]) { (error, result) in
+            }
+        } else {
+            Database.database().reference().child("tweet-bookmark").child(tweet.tweetID).child(userID).removeValue() { (error, ref)  in
+            }
+            Database.database().reference().child("user-bookmark").child(userID).child(tweet.tweetID).removeValue() { (error, ref)  in
+            }
+        }
+        completion(!tweet.followInfo!.didBookmark)
+
+    }
+    
+    func deleteTweet(tweet: Tweet, completion: @escaping (Result<String, Error>) -> ()){
+        Database.database().reference().child("tweets").child(tweet.tweetID).removeValue() { (error, ref)  in
+            if let error = error {
+                completion(.failure(error))
+            }
+            completion(.success("Successfully Deleted Tweet"))
+        }
+    
+    }
+    
 }

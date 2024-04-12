@@ -7,39 +7,37 @@
 
 import UIKit
 
+
+
 class UserProfileController: UICollectionViewController {
     
-    //MARK: - Properties
+    
     private var user: User {
-        didSet{
-            collectionView.reloadData()
-        }
+        didSet{ collectionView.reloadData() }
     }
     
-
-   var mainList = [Tweet](){
-        didSet{
-            collectionView.reloadData()
-        }
+    private var mainList = [Tweet](){
+       didSet{ collectionView.reloadData() }
     }
     
-    var userTweets = [Tweet]() {
-        didSet{
-            collectionView.reloadData()
-        }
+    private var userTweets = [Tweet]() {
+        didSet{ collectionView.reloadData() }
     }
     
-    var userReplies = [Tweet]() {
-        didSet{
-            collectionView.reloadData()
-        }
+    private var userReplies = [Tweet]() {
+        didSet{ collectionView.reloadData() }
     }
     
+    private var userLikes = [Tweet]() {
+        didSet{ collectionView.reloadData() }
+    }
+    
+    private var userRetweets = [Tweet]() {
+        didSet{ collectionView.reloadData() }
+    }
     
     private var isFollowing = Bool() {
-        didSet{
-            collectionView.reloadData()
-        }
+        didSet{ collectionView.reloadData() }
     }
     
     
@@ -59,6 +57,8 @@ class UserProfileController: UICollectionViewController {
         fetchUserTweets()
         checkFollowing()
         fetchUserReplies()
+        fetchUserLikes()
+        fetchUserRetweets()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,17 +71,39 @@ class UserProfileController: UICollectionViewController {
     //MARK: - API
     func fetchUserTweets(){
         TweetService.shared.fetchUserTweets(for: user) { tweets in
-            let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
-            self.userTweets = sorted
-            self.mainList = sorted
+            DispatchQueue.main.async{
+                let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
+                self.userTweets = sorted
+                self.mainList = sorted
+            }
         }
     }
     
     func fetchUserReplies(){
-        TweetService.shared.fetchUserReplies(withUser: user, completion: { tweets in
-            let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
-            self.userReplies = sorted
-        })
+        TweetService.shared.fetchUserReplies(withUser: user) { tweets in
+            DispatchQueue.main.async{
+                let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
+                self.userReplies = sorted
+            }
+        }
+    }
+    
+    func fetchUserLikes(){
+        TweetService.shared.fetchUserLikes(withUser: user) { tweets in
+            DispatchQueue.main.async{
+                let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
+                self.userLikes = sorted
+            }
+        }
+    }
+    
+    func fetchUserRetweets(){
+        TweetService.shared.fetchUserRetweets(withUser: user) { tweets in
+            DispatchQueue.main.async{
+                let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
+                self.userRetweets = sorted
+            }
+        }
     }
     
     
@@ -106,13 +128,11 @@ class UserProfileController: UICollectionViewController {
         if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
            flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize  //Set the autolayout for the collectionview cells
          }
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .done, target: self, action: #selector(goBack))
     }
 }
 
 //MARK: - UICollectionViewDataSource
 extension UserProfileController {
-    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return mainList.count
     }
@@ -154,18 +174,7 @@ extension UserProfileController: UICollectionViewDelegateFlowLayout {
 extension UserProfileController: UserProfileHeaderDelegate {
     func filterTweetList(_ indexPath: Int) {
         print("THIS IS INDEX \(indexPath)")
-//        switch indexPath {
-//        case 0:
-//            allLists.removeAll()
-//            allLists = userTweets
-//        case 1:
-//            allLists.removeAll()
-//            allLists = userReplies
-//        default:
-//            print("THIS IS ERROR \(indexPath)")
-//        }
-        
-        
+                
         let option = ProfileFilterOptions(rawValue: indexPath)
         switch option?.description {
         case "Tweets":
@@ -174,6 +183,12 @@ extension UserProfileController: UserProfileHeaderDelegate {
         case "Replies":
             mainList.removeAll()
             mainList = userReplies
+        case "Likes":
+            mainList.removeAll()
+            mainList = userLikes
+        case "Retweets":
+            mainList.removeAll()
+            mainList = userRetweets
         default:
             print("Error")
         }

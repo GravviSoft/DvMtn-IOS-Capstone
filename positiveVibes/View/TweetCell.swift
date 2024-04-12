@@ -12,6 +12,14 @@ protocol MainFeedControllerCellDelegate: AnyObject {
     func infoLabelPressedSegue(_ tweet: Tweet)
     func userProfImgPressSegue(_ cell: TweetCell)
     func commentBtnPressedSegue(_ tweet: Tweet)
+    func feedActionLauncher(_ tweet: Tweet)
+    func handleLikeBtn(_ cell: TweetCell)
+    func handleRetweetBtn(_ cell: TweetCell)
+    func handleBookMarkBtn(_ cell: TweetCell)
+    func handleReport(_ cell: TweetCell)
+    func handleDeleteTweet(_ cell: TweetCell)
+    func handleFollow(_ cell: TweetCell)
+    func handleUnfollow(_ cell: TweetCell)
  }
 
 class TweetCell: UICollectionViewCell {
@@ -20,11 +28,16 @@ class TweetCell: UICollectionViewCell {
     //MARK: - Properties    
     weak var delegate : MainFeedControllerCellDelegate?
     
+
+    
     var tweet: Tweet? {
         didSet{ configTweet() }
     }
     
-    
+//    var tweetIcons: Following? {
+//        didSet{ configIcons() }
+//    }
+//    
     private lazy var profileImg: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
@@ -45,13 +58,34 @@ class TweetCell: UICollectionViewCell {
         return label
     }()
     
-    private let infoLabel = UILabel()
+    private let infoLabel = UILabel()    
     
-    private let optionsBtn: UIButton = {
+    var commentCount:  UILabel = {
+       let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 14)
+        return label
+    }()
+    
+    private let likeCount:  UILabel = {
+       let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 14)
+        return label
+    }()
+    
+    private let retweetCount:  UILabel = {
+       let label = UILabel()
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 14)
+        return label
+    }()
+
+
+    private lazy var optionsBtn: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         button.tintColor = .iconBadgeTheme
-        button.addTarget(self, action: #selector(optionBtnPressed), for: .touchUpInside)
         return button
     }()
     
@@ -82,6 +116,16 @@ class TweetCell: UICollectionViewCell {
         button.addTarget(self, action: #selector(likeBtnPressed), for: .touchUpInside)
         return button
     }()
+    
+//    private let likeBtn: UIImageView = {
+//        let button = UIImageView(image: UIImage(systemName: "suit.heart"))
+//        button.tintColor = .systemGray
+//        button.setDimensions(width: 20, height: 20)
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(likeBtnPressed))
+//        button.addGestureRecognizer(tap)
+//        button.isUserInteractionEnabled = true
+//        return button
+//    }()
     
     private let bookmarkBtn: UIButton = {
         let button = UIButton(type: .system)
@@ -116,9 +160,19 @@ class TweetCell: UICollectionViewCell {
         let labelStack = UIStackView(arrangedSubviews: [infoLabel, optionsBtn])
         labelStack.axis = .horizontal
         labelStack.distribution = .equalSpacing
+        
+        let comStack = UIStackView(arrangedSubviews: [commentBtn, commentCount])
+        comStack.axis = .horizontal
+        comStack.spacing = 5
+        let retweetStack = UIStackView(arrangedSubviews: [retweetBtn, retweetCount])
+        retweetStack.axis = .horizontal
+        retweetStack.spacing = 5
+        let likeStack = UIStackView(arrangedSubviews: [likeBtn, likeCount])
+        likeStack.axis = .horizontal
+        likeStack.spacing = 5
 
         
-        let iconStack = UIStackView(arrangedSubviews: [commentBtn, retweetBtn, likeBtn, bookmarkBtn, shareBtn])
+        let iconStack = UIStackView(arrangedSubviews: [comStack, retweetStack, likeStack, bookmarkBtn])
         iconStack.axis = .horizontal
         iconStack.distribution = .equalSpacing
 //        iconStack.heightAnchor.constraint(equalToConstant: 20).isActive = true
@@ -132,8 +186,6 @@ class TweetCell: UICollectionViewCell {
              
         configLine()
         
-        
-
     }
     
     
@@ -144,7 +196,8 @@ class TweetCell: UICollectionViewCell {
     
     //MARK: - Selectors
     @objc func optionBtnPressed(){
-        print("optionBtnPressed")
+        guard let tweet = tweet else { return }
+        delegate?.feedActionLauncher(tweet)
     }
     
     @objc func profileImgPressed(){
@@ -152,27 +205,29 @@ class TweetCell: UICollectionViewCell {
     }
     
     @objc func infoLabelPressed(){
-        print("infoLabelPressed")
         guard let tweet = tweet else { return }
         delegate?.infoLabelPressedSegue(tweet)
     }
     
     @objc func commentBtnPressed(){
-        print("commentBtnPressed")
         guard let tweet = tweet else { return }
         delegate?.commentBtnPressedSegue(tweet)
+        Utilities().animateIcon(self.commentBtn)
 
     }
     
     @objc func retweetBtnPressed(){
-        print("retweetBtnPressed")
+        delegate?.handleRetweetBtn(self)
+        Utilities().animateIcon(self.retweetBtn)
     }
     @objc func likeBtnPressed(){
-        print("likeBtnPressed")
+        delegate?.handleLikeBtn(self)
+        Utilities().animateIcon(self.likeBtn)
     }
     
     @objc func bookmarkBtnPressed(){
-        print("bookmarkBtnPressed")
+        delegate?.handleBookMarkBtn(self)
+        Utilities().animateIcon(self.bookmarkBtn)
     }
     @objc func shareBtnPressed(){
         print("shareBtnPressed")
@@ -188,6 +243,7 @@ class TweetCell: UICollectionViewCell {
         line.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 0.18)
     }
     
+
     func configTweet(){
         guard let tweet = tweet else { return }
 
@@ -196,15 +252,31 @@ class TweetCell: UICollectionViewCell {
         guard let getUrlFromUserImgString = URL(string: tweet.user.profileImgUrl) else { return } // Image
         profileImg.sd_setImage(with: getUrlFromUserImgString)
 
-        
-        let viewModel = TweetViewModel(tweet: tweet) //info label
+        let viewModel = TweetViewModel(tweet: tweet, delegate: delegate, tweetCell: self) //info label
         infoLabel.attributedText = viewModel.userInfoText
         infoLabel.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(infoLabelPressed))
         infoLabel.addGestureRecognizer(tap)
         
+        likeBtn.tintColor = viewModel.likButtonTint
+        likeBtn.setImage(viewModel.likeBtnImage, for: .normal)
+        likeCount.text = "\(tweet.likes)"
+        
+        retweetBtn.tintColor = viewModel.retweetColor
+        retweetBtn.setImage(viewModel.retweetImg, for: .normal)
+        retweetCount.text = "\(tweet.retweetCount)"
+        
+        bookmarkBtn.tintColor = viewModel.bookmarkColor
+        bookmarkBtn.setImage(viewModel.bookmarkImg, for: .normal)
+        
+        optionsBtn.menu = viewModel.menu
+        optionsBtn.showsMenuAsPrimaryAction = true
+        
+        commentCount.text = "\(tweet.replyCount)"
+        
+        
+        
         
     }
-    
     
 }

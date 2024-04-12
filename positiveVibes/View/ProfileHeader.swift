@@ -121,16 +121,16 @@ class ProfileHeader: UICollectionReusableView {
     
     private lazy var followingLabel: UILabel = {
         let label = UILabel()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(followingPressed))
-        label.addGestureRecognizer(tap)
-        label.isUserInteractionEnabled = true
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(followingPressed))
+//        label.addGestureRecognizer(tap)
+//        label.isUserInteractionEnabled = true
         return label
     }()
     private lazy var followersLabel: UILabel = {
         let label = UILabel()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(followersPressed))
-        label.addGestureRecognizer(tap)
-        label.isUserInteractionEnabled = true
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(followersPressed))
+//        label.addGestureRecognizer(tap)
+//        label.isUserInteractionEnabled = true
         return label
     }()
     
@@ -183,13 +183,6 @@ class ProfileHeader: UICollectionReusableView {
     }
     
     //MARK: - Selectors
-    @objc func followingPressed(){
-        print("followingPressed")
-    }
-    
-    @objc func followersPressed(){
-        print("followersPressed")
-    }
     
     @objc func backBtnPressed(){
         delegate?.backBtnPressed()

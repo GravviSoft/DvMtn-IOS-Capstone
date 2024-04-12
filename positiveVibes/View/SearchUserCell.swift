@@ -17,7 +17,6 @@ class SearchUserCell: UITableViewCell {
     }
     private lazy var profileImg: UIImageView = {
        let img = UIImageView()
-        img.backgroundColor = .twitterBlue
         img.setDimensions(width: 48, height: 48)
         img.layer.cornerRadius = 48 / 2
         img.layer.masksToBounds = true
