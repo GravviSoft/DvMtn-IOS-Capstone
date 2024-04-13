@@ -214,7 +214,10 @@ extension UserProfileController: UserProfileHeaderDelegate {
 
     
     func backBtnPressed() {
-        dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "backBtnPressed"), object: nil)
+        Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { timer in // give time to save data and update UI properly
+            self.dismiss(animated: true, completion: nil)
+        }        
     }
 }
 

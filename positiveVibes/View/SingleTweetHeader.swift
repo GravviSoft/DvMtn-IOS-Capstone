@@ -386,6 +386,7 @@ class SingleTweetHeader: UICollectionReusableView {
 
         likeCount.text = "\(tweet.likes)"
         retweetCount.text = "\(tweet.retweetCount)"
+//        commentLabel.text = "\(tweet.replyCount)"
 
 //        optionsBtn.menu = viewModel.menu
 //        optionsBtn.showsMenuAsPrimaryAction = true

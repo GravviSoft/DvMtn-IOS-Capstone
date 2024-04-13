@@ -53,7 +53,6 @@ class TweetController: UIViewController{
     
     private var replyBtn: UIButton = {
         let button = UIButton(type: .system)
-//        let button = Utilities().replyToBtn(text: "Replying to ", boldText: user.userName, andSelector: #selector(replyBtnPressed))
         return button
     }()
     
@@ -94,8 +93,6 @@ class TweetController: UIViewController{
         }
         let configInfo = UploadTweetViewModel(config)
         configInfo.showReplyInfo ? saveReplyTweets() : saveTweets()
-        
-        dismiss(animated: true, completion: nil)
     }
     
     @objc func cancelPressed(){
@@ -120,9 +117,10 @@ class TweetController: UIViewController{
             DispatchQueue.main.async{
                 switch result{
                 case .success(let success):
-                    print(success)
+                    self.dismiss(animated: true, completion: nil)
                 case .failure(let error):
                     print(error.localizedDescription)
+                    self.dismiss(animated: true, completion: nil)
                 }
             }
         }
@@ -131,12 +129,16 @@ class TweetController: UIViewController{
     func saveReplyTweets(){
         guard let tweet = captionTextView.text else { return }
         let configInfo = UploadTweetViewModel(config)
-        TweetService.shared.saveReplyTweet(withText: tweet, tweetUID: configInfo.tweet!.tweetID, andUID:  configInfo.currentUserUID ?? user.uid) {  result in DispatchQueue.main.async{
+        TweetService.shared.saveReplyTweet(withText: tweet, tweetUID: configInfo.tweet!.tweetID, andUID:  configInfo.currentUserUID ?? user.uid) {  result in 
+            DispatchQueue.main.async{
                 switch result{
                 case .success(let success):
-                    print(success)
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "backBtnPressed"), object: nil)
+                    Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in // give time to save data and update UI properly
+                        self.dismiss(animated: true, completion: nil)
+                    }
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    self.dismiss(animated: true, completion: nil)
                 }
             }
         }

@@ -16,6 +16,7 @@ class SingleTweetController: UICollectionViewController {
         didSet{
             collectionView.reloadData()
             actionSheetLauncher = ActionSheetLauncher(user: tweet.user)
+            actionSheetLauncher.delegate = self
             print("actionSheetLauncher change: \(actionSheetLauncher)")
         }
     }
@@ -72,8 +73,10 @@ class SingleTweetController: UICollectionViewController {
     
     //MARK: - Selectors
     @objc func backBtnPressed(){
-        dismiss(animated: true, completion: nil)
-
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "backBtnPressed"), object: nil)
+        Timer.scheduledTimer(withTimeInterval: 0.8, repeats: false) { timer in // give time to save data and update UI properly
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     
@@ -121,7 +124,6 @@ extension SingleTweetController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.reuseTweetCellId, for: indexPath) as! TweetCell
         cell.tweet = replies[indexPath.row]
-        
         return cell
     }
 }
@@ -186,7 +188,15 @@ extension SingleTweetController{
 
 
 //MARK: - SingleTweetHeaderDelegate
-extension SingleTweetController: SingleTweetHeaderDelegate{
+extension SingleTweetController: SingleTweetHeaderDelegate, ActionSheetDeleteDelegate{
+    func handleReportTweet() {
+        Utilities().presentUIAlert("Reported @\(tweet.user.userName)", view: self)
+    }
+    
+    func handleDeleteTweet() {
+        Utilities().presentDeleteAlert(withTweet: tweet, view: self)
+    }
+    
     func handleSingleComment(_ tweet: Tweet) {
         let nav = UINavigationController(rootViewController: TweetController(user: tweet.user, config: .reply(tweet, user)))
         nav.modalPresentationStyle = .fullScreen

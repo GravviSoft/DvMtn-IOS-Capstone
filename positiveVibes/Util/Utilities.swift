@@ -184,6 +184,33 @@ class Utilities {
         view.present(alertController, animated: true)
     }
     
+    func presentDeleteAlert(withTweet tweet: Tweet, view: UICollectionViewController){
+        let alertController = UIAlertController(title: "Confirm Delete", message: "Are you sure you want to delete?", preferredStyle: .alert)
+        // create a cancel action
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        // add the cancel action to the alertController
+        alertController.addAction(cancelAction)
+        // create an OK action
+        let OKAction = UIAlertAction(title: "OK", style: .destructive) { (action) in
+            TweetService.shared.deleteTweet(tweet: tweet) { result in
+                DispatchQueue.main.async{
+                    switch result {
+                    case .success(let success):
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "backBtnPressed"), object: nil)
+                        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in // give time to delete data and update UI
+                            view.dismiss(animated: true, completion: nil)
+                        }
+                    case .failure(let error):
+                        Utilities().presentUIAlert("\(error.localizedDescription)", view: view)
+                    }
+                }
+            }
+        }
+        // add the OK action to the alert controller
+        alertController.addAction(OKAction)
+        view.present(alertController, animated: true)
+    }
+    
     func changeNavBar(navigationBar: UINavigationBar, to color: UIColor) {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -204,13 +231,6 @@ class Utilities {
          label.text = text
          label.sizeToFit()
     
-//        label.lineBreakStrategy = .
-//        label.allowsDefaultTighteningForTruncation = true
-//        var lines = "Hello, playground\r\nhere too\r\nGalahad\r\n"
-//        lines.unicodeScalars.reduce(into: 0) { (cnt, letter) in
-//        if CharacterSet.newlines.contains(letter) {
-//            cnt += 1
-//        }
         
         return label.bounds.size.height
     }

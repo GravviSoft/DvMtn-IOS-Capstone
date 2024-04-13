@@ -7,12 +7,20 @@
 
 import UIKit
 
+protocol ActionSheetDeleteDelegate: AnyObject{
+    func handleDeleteTweet()
+    func handleReportTweet()
+}
+
 
 class ActionSheetLauncher: NSObject {
     
     //MARK: - Properties
+    weak var delegate: ActionSheetDeleteDelegate?
     
     private var user: User
+    
+//    private var tweet: Tweet
     
     private var isFollowing = Bool()
     
@@ -163,7 +171,7 @@ extension ActionSheetLauncher: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch viewModel.options.first {
+        switch viewModel.options[indexPath.row]{
         case .follow(let user):
             print("Followfollow")
             UserService.shared.followUser(uid: user.uid) { result in
@@ -176,7 +184,14 @@ extension ActionSheetLauncher: UITableViewDelegate {
                 self.viewModel = ActionSheetViewModel(user: user, isFollowing: false)
             }
         case .delete:
-                print("DELETEDELTE")
+            cancelBtnPressed()
+            delegate?.handleDeleteTweet()
+          
+        case .report:
+            print(viewModel)
+            print("report")
+            cancelBtnPressed()
+            delegate?.handleReportTweet()
         default:
             print("Error")
         }

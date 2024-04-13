@@ -36,13 +36,23 @@ class MainFeedController: UICollectionViewController  {
         super.viewDidLoad()
         configureUI()
         fetchTweets()
+//        NotificationCenter.default.addObserver(self, selector: #selector(refreshList), name:NSNotification.Name(rawValue: "backBtnPressed"), object: nil)
+
+//        fetchTweetFollowing()
         print("VIEW DID LOAD")
         
     }
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         print("ViewWILL APPREAR")
-        fetchTweetFollowing()
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshList), name:NSNotification.Name(rawValue: "backBtnPressed"), object: nil)
+//        fetchTweetFollowing()
+//        fetchTweets()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("DIDDISAPEAR")
     }
     
     //MARK: - Selectors
@@ -57,23 +67,31 @@ class MainFeedController: UICollectionViewController  {
         AuthService.shared.logUserOut(withView: self)
     }
     
+    @objc func refreshList(notification: NSNotification){
+        print("refreshList")
+        fetchTweets()
+    }
+    
     //MARK: - API
     func fetchTweets(){
-        TweetService.shared.fetchTweet { tweets in
-            let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
-            self.tweets = sorted
+        print("fetchTweets")
+        DispatchQueue.main.async{
+            TweetService.shared.fetchTweet { tweets in
+                let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
+                self.tweets = sorted
+            }
         }
     }
+    
     
     func fetchTweetFollowing(){
         print("fetchTweetFollowing")
         TweetService.shared.fetchTweet { tweets in
             DispatchQueue.main.async{
                 let sorted = tweets.sorted { $0.timestamp > $1.timestamp }  //Newest tweets on top
-                for (index, _) in self.tweets.enumerated() {
+                for (index, newTweets) in sorted.enumerated() {
                     if self.tweets.count == sorted.count{
-//                        self.tweets[index].followInfo?.isFollowing = sorted[index].followInfo!.isFollowing
-                        self.tweets[index].followInfo? = sorted[index].followInfo!
+                        self.tweets[index] = sorted[index]
                     }
                 }
             }

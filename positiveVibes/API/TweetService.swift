@@ -14,7 +14,7 @@ class TweetService {
     static let shared = TweetService()
     
     func saveTweet(withText text: String, andUID uid: String, completion: @escaping (Result<String, Error>) -> Void){
-        let info = ["tweet": text, "uid": uid, "timestamp": Int(NSDate().timeIntervalSince1970), "likes": 0, "retweet": 0] as [String : Any]
+        let info = ["tweet": text, "uid": uid, "timestamp": Int(NSDate().timeIntervalSince1970), "likes": 0, "retweetCount": 0, "replyCount": 0] as [String : Any]
         Database.database().reference().child("tweets").childByAutoId().updateChildValues(info) { (error, result) in
             if let error = error {
                 completion(.failure(error))
@@ -54,15 +54,16 @@ class TweetService {
                         Database.database().reference().child("user-bookmark").child(userID).child(tweetID).observeSingleEvent(of: .value) { didBookmark, err  in
                             let didBookmark = didBookmark.exists()
                             data.didBookmark = didBookmark
-                            Database.database().reference().child("tweet-replies").child(tweetID).observe(.value) { replyCnt  in
+//                            Database.database().reference().child("tweet-replies").child(tweetID).observe(.value) { replyCnt  in
 //                                print("REPLY COUNT \(replyCnt.childrenCount)")
-                                tweet.replyCount = Int(replyCnt.childrenCount)
+//                                tweet.replyCount = Int(replyCnt.childrenCount)
                                 Database.database().reference().child("user-followers").child(uid).child(userID).observeSingleEvent(of: .value) { isFollowing in
                                     data.isFollowing = isFollowing.exists()
                                     tweet.followInfo = data
                                     tweets.append(tweet)
                                     completion(tweets)
-                                }
+//                                    print(tweets)
+//                                }
                             }
                         }
                     }
@@ -117,7 +118,7 @@ class TweetService {
     
     
     func saveReplyTweet(withText text: String, tweetUID: String, andUID uid: String, completion: @escaping (Result<String, Error>) -> Void){
-        let info = ["tweet": text, "uid": uid, "timestamp": Int(NSDate().timeIntervalSince1970), "likes": 0, "retweet": 0] as [String : Any]
+        let info = ["tweet": text, "uid": uid, "timestamp": Int(NSDate().timeIntervalSince1970), "likes": 0, "retweetCount": 0, "replyCount": 0] as [String : Any]
         Database.database().reference().child("tweet-replies").child(tweetUID).childByAutoId().updateChildValues(info) { (error, result) in
             if let error = error {
                 completion(.failure(error))
@@ -127,7 +128,12 @@ class TweetService {
                 if let error = error {
                     completion(.failure(error))
                 }
-            completion(.success("Nice work, you saved the tweet"))
+                Database.database().reference().child("tweet-replies").child(tweetUID).observe(.value) { replyCnt  in
+                    let count = Int(replyCnt.childrenCount)
+                    Database.database().reference().child("tweets").child(tweetUID).child("replyCount").setValue(count)
+                    completion(.success("Nice work, you saved the tweet"))
+
+                }
             }
         }
     }

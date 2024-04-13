@@ -33,11 +33,7 @@ class TweetCell: UICollectionViewCell {
     var tweet: Tweet? {
         didSet{ configTweet() }
     }
-    
-//    var tweetIcons: Following? {
-//        didSet{ configIcons() }
-//    }
-//    
+      
     private lazy var profileImg: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .twitterBlue
@@ -171,11 +167,9 @@ class TweetCell: UICollectionViewCell {
         likeStack.axis = .horizontal
         likeStack.spacing = 5
 
-        
         let iconStack = UIStackView(arrangedSubviews: [comStack, retweetStack, likeStack, bookmarkBtn])
         iconStack.axis = .horizontal
         iconStack.distribution = .equalSpacing
-//        iconStack.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         let vertStack = UIStackView(arrangedSubviews: [labelStack, tweetMsg, iconStack])
         vertStack.axis = .vertical
@@ -212,22 +206,22 @@ class TweetCell: UICollectionViewCell {
     @objc func commentBtnPressed(){
         guard let tweet = tweet else { return }
         delegate?.commentBtnPressedSegue(tweet)
-        Utilities().animateIcon(self.commentBtn)
+//        Utilities().animateIcon(self.commentBtn)
 
     }
     
     @objc func retweetBtnPressed(){
         delegate?.handleRetweetBtn(self)
-        Utilities().animateIcon(self.retweetBtn)
+//        Utilities().animateIcon(self.retweetBtn)
     }
     @objc func likeBtnPressed(){
         delegate?.handleLikeBtn(self)
-        Utilities().animateIcon(self.likeBtn)
+//        Utilities().animateIcon(self.likeBtn)
     }
     
     @objc func bookmarkBtnPressed(){
         delegate?.handleBookMarkBtn(self)
-        Utilities().animateIcon(self.bookmarkBtn)
+//        Utilities().animateIcon(self.bookmarkBtn)
     }
     @objc func shareBtnPressed(){
         print("shareBtnPressed")
@@ -273,9 +267,6 @@ class TweetCell: UICollectionViewCell {
         optionsBtn.showsMenuAsPrimaryAction = true
         
         commentCount.text = "\(tweet.replyCount)"
-        
-        
-        
         
     }
     
