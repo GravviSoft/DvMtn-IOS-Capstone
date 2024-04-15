@@ -15,5 +15,5 @@ The Twitter iOS Clone is designed to replicate the core functionalities of the p
 - Search functionality: Enable users to search for other users and tweets based on keywords or usernames.
 - Dark mode support: Provide a visually appealing experience by supporting both light and dark modes.
 
-<!-- ![DMNetworking](
-https://github.com/GravviSoft/DvMtn-Networking/blob/main/viralimgs.png) -->
+![DvMtn-IOS-Capstone](
+https://github.com/GravviSoft/DvMtn-IOS-Capstone/blob/main/viralimgs.png)
