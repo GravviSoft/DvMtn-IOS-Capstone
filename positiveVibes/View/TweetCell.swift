@@ -36,7 +36,6 @@ class TweetCell: UICollectionViewCell {
       
     private lazy var profileImg: UIImageView = {
         let iv = UIImageView()
-        iv.backgroundColor = .twitterBlue
         iv.setDimensions(width: 38, height: 38)
         iv.layer.cornerRadius = 38 / 2
         iv.layer.masksToBounds = true
@@ -113,15 +112,6 @@ class TweetCell: UICollectionViewCell {
         return button
     }()
     
-//    private let likeBtn: UIImageView = {
-//        let button = UIImageView(image: UIImage(systemName: "suit.heart"))
-//        button.tintColor = .systemGray
-//        button.setDimensions(width: 20, height: 20)
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(likeBtnPressed))
-//        button.addGestureRecognizer(tap)
-//        button.isUserInteractionEnabled = true
-//        return button
-//    }()
     
     private let bookmarkBtn: UIButton = {
         let button = UIButton(type: .system)

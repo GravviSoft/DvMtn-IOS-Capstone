@@ -66,47 +66,6 @@ class Utilities {
         return view
     }
     
-//    func showErrors(withText text: String, forView view: UIView, errorTag1: Int){
-//        let errorBubble = UIImageView()
-//        errorBubble.tag = errorTag1
-//        errorBubble.image = UIImage(systemName: "bubble.middle.top.fill")
-//        errorBubble.tintColor = .red
-//        errorBubble.isHidden = true
-//        view.addSubview(errorBubble)
-//        errorBubble.anchor(top: view.bottomAnchor, left: view.leftAnchor, paddingLeft: 20, height: 40)
-//        
-//        let errorRec = UIView()
-//        errorRec.tag = errorTag1 + 1
-//        errorRec.backgroundColor = .red
-//        errorRec.isHidden = true
-//        view.addSubview(errorRec)
-//        errorRec.anchor(top: view.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 8, height: 35)
-//        
-//        let errorMsg = UILabel()
-//        errorMsg.tag = errorTag1 + 2
-//        errorMsg.text = text
-//        errorMsg.textColor = .white
-////        errorMsg.sizeToFit()
-//        errorMsg.adjustsFontSizeToFitWidth = true
-//        errorMsg.minimumScaleFactor = 0.5
-//        errorMsg.numberOfLines = 0
-//        errorMsg.isHidden = true
-//        view.addSubview(errorMsg)
-//        errorMsg.anchor(top: errorRec.topAnchor, left: errorRec.leftAnchor, bottom: errorRec.bottomAnchor, right: errorRec.rightAnchor, paddingTop: 5, paddingLeft: 8, paddingBottom: 5)
-//        
-//        for tag in errorTag1...errorTag1 + 2{
-//            view.viewWithTag(errorTag1 - 1)?.isHidden = true
-//            view.viewWithTag(tag)?.isHidden = false
-//        }
-//    }
-//    
-//    func hideErrors(withErrorTag errorTag1: Int, forView view: UIView){
-//        for tag in errorTag1...errorTag1 + 2{
-//            view.viewWithTag(errorTag1 - 1)?.isHidden = true
-//            view.viewWithTag(tag)?.isHidden = false
-//        }
-//    }
-    
     
     func textFieldHelper(withPlaceholder placeholder: String, selector1 selector_1: Selector, selector2 selector_2: Selector ) -> UITextField {
         let tf = UITextField()

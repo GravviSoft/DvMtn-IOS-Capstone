@@ -147,14 +147,6 @@ class LoginController: UIViewController, UITextFieldDelegate{
         default:
             print("Error")
         }
-        
-//        if textField.placeholder == "Email"{
-//            view.viewWithTag(1)?.isHidden = textField.text!.isEmpty ? true : false
-//            view.viewWithTag(2)?.isHidden = textField.text!.isEmpty ? true : false
-//        } else {
-//            view.viewWithTag(6)?.isHidden = textField.text!.isEmpty ? true : false
-//            view.viewWithTag(7)?.isHidden = textField.text!.isEmpty ? true : false
-//        }
     }
     
     @objc func textFieldDidEndEditing(_ textField: UITextField){
@@ -202,7 +194,7 @@ class LoginController: UIViewController, UITextFieldDelegate{
         stack.axis = .vertical
         view.addSubview(stack)
         stack.anchor(top: logoImg.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 20, paddingLeft: 35, paddingRight: 35)
-//
+
         view.addSubview(needAcctBtn)
         needAcctBtn.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingBottom: 35)
         
