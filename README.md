@@ -16,4 +16,4 @@ The Twitter iOS Clone is designed to replicate the core functionalities of the p
 - Dark mode support: Provide a visually appealing experience by supporting both light and dark modes.
 
 ![DvMtn-IOS-Capstone](
-https://github.com/GravviSoft/DvMtn-IOS-Capstone/blob/main/viralimgs.png)
+https://github.com/GravviSoft/DvMtn-IOS-Capstone/blob/main/twittercloneimg.jpeg)
