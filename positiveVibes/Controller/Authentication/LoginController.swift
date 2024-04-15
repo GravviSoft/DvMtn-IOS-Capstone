@@ -14,7 +14,6 @@ class LoginController: UIViewController, UITextFieldDelegate{
     private lazy var logoImg: UIImageView = {
         let iv = UIImageView()
         iv.heightAnchor.constraint(lessThanOrEqualToConstant: 175).isActive = true
-//        iv.heightAnchor.constraint(equalToConstant: 175).isActive = true
         iv.contentMode = .scaleAspectFit
         iv.clipsToBounds = true
         iv.image = UIImage(named: "vibeImage")
